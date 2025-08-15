@@ -107,5 +107,6 @@ For questions, reach out to the team lead or open an issue in this repository.
 
 ---
 ## Contributors
-smit-
+Rudra Patel
+Smit Patel
 
