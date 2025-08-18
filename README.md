@@ -106,4 +106,9 @@ bolt-ride/
 For questions, reach out to the team lead or open an issue in this repository.
 
 ---
+## Contributors
+Rudra Patel
+Smit Patel
+Dhruvil Patel
+Avinash Patel
 
