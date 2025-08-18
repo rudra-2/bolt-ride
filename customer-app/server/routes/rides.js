@@ -1,0 +1,200 @@
+const express = require('express');
+const RideHistory = require('../models/RideHistory');
+const Vehicle = require('../models/Vehicle');
+const Customer = require('../models/Customer');
+const ParkingStation = require('../models/ParkingStation');
+const auth = require('../middleware/auth');
+const router = express.Router();
+
+// Start ride
+router.post('/start', auth, async (req, res) => {
+  try {
+    const { vehicle_id, station_id } = req.body;
+    const customer_id = req.customer.customer_id;
+
+    // Check if customer has sufficient wallet balance
+    if (req.customer.wallet < 50) {
+      return res.status(400).json({ message: 'Insufficient wallet balance. Minimum ₹50 required.' });
+    }
+
+    // Check if vehicle is available
+    const vehicle = await Vehicle.findOne({ vehicle_id });
+    if (!vehicle || vehicle.status !== 'available') {
+      return res.status(400).json({ message: 'Vehicle is not available' });
+    }
+
+    // Check if customer has any ongoing ride
+    const ongoingRide = await RideHistory.findOne({ 
+      customer_id, 
+      status: 'ongoing' 
+    });
+    
+    if (ongoingRide) {
+      return res.status(400).json({ message: 'You already have an ongoing ride' });
+    }
+
+    // Generate ride_id
+    const ride_id = `RIDE_${Date.now()}_${customer_id}`;
+
+    // Create ride
+    const ride = new RideHistory({
+      ride_id,
+      customer_id,
+      vehicle_id,
+      pickup_station_id: station_id,
+      start_date: new Date()
+    });
+
+    await ride.save();
+
+    // Update vehicle status
+    await Vehicle.findOneAndUpdate(
+      { vehicle_id },
+      { status: 'in_use' }
+    );
+
+    res.status(201).json({
+      message: 'Ride started successfully',
+      ride: {
+        ride_id: ride.ride_id,
+        vehicle_id: ride.vehicle_id,
+        pickup_station_id: ride.pickup_station_id,
+        start_date: ride.start_date
+      }
+    });
+  } catch (error) {
+    res.status(500).json({ message: 'Server error', error: error.message });
+  }
+});
+
+// End ride
+router.post('/end', auth, async (req, res) => {
+  try {
+    const { ride_id, drop_station_id, distance, total_time } = req.body;
+    const customer_id = req.customer.customer_id;
+
+    // Find the ride
+    const ride = await RideHistory.findOne({ ride_id, customer_id });
+    if (!ride) {
+      return res.status(404).json({ message: 'Ride not found' });
+    }
+
+    if (ride.status !== 'ongoing') {
+      return res.status(400).json({ message: 'Ride is not ongoing' });
+    }
+
+    // Calculate fare (₹5 base + ₹2 per km + ₹1 per minute)
+    const baseFare = 5;
+    const distanceFare = distance * 2;
+    const timeFare = total_time * 1;
+    const totalFare = baseFare + distanceFare + timeFare;
+
+    // Check if customer has sufficient balance
+    if (req.customer.wallet < totalFare) {
+      return res.status(400).json({ message: 'Insufficient wallet balance' });
+    }
+
+    // Update ride
+    ride.drop_station_id = drop_station_id;
+    ride.distance = distance;
+    ride.total_time = total_time;
+    ride.end_date = new Date();
+    ride.fare_collected = totalFare;
+    ride.status = 'completed';
+    await ride.save();
+
+    // Update customer wallet
+    await Customer.findOneAndUpdate(
+      { customer_id },
+      { $inc: { wallet: -totalFare } }
+    );
+
+    // Update vehicle status and station
+    await Vehicle.findOneAndUpdate(
+      { vehicle_id: ride.vehicle_id },
+      { 
+        status: 'available',
+        station_id: drop_station_id
+      }
+    );
+
+    res.json({
+      message: 'Ride ended successfully',
+      ride: {
+        ride_id: ride.ride_id,
+        distance: ride.distance,
+        total_time: ride.total_time,
+        fare_collected: ride.fare_collected,
+        start_date: ride.start_date,
+        end_date: ride.end_date
+      }
+    });
+  } catch (error) {
+    res.status(500).json({ message: 'Server error', error: error.message });
+  }
+});
+
+// Get ride history
+router.get('/history', auth, async (req, res) => {
+  try {
+    const customer_id = req.customer.customer_id;
+    
+    const rides = await RideHistory.find({ customer_id })
+      .sort({ start_date: -1 })
+      .limit(50);
+
+    res.json({
+      message: 'Ride history fetched successfully',
+      rides
+    });
+  } catch (error) {
+    res.status(500).json({ message: 'Server error', error: error.message });
+  }
+});
+
+// Get specific ride details
+router.get('/:id', auth, async (req, res) => {
+  try {
+    const customer_id = req.customer.customer_id;
+    const ride = await RideHistory.findOne({ 
+      ride_id: req.params.id, 
+      customer_id 
+    });
+
+    if (!ride) {
+      return res.status(404).json({ message: 'Ride not found' });
+    }
+
+    res.json({
+      message: 'Ride details fetched successfully',
+      ride
+    });
+  } catch (error) {
+    res.status(500).json({ message: 'Server error', error: error.message });
+  }
+});
+
+// Alert for geofencing violation
+router.post('/alert', auth, async (req, res) => {
+  try {
+    const { ride_id, alert_type, coordinates } = req.body;
+    
+    // Log the alert (you can save this to database if needed)
+    console.log(`Alert: ${alert_type} for ride ${ride_id} at coordinates:`, coordinates);
+    
+    // You can implement additional actions here like:
+    // - Send notification to customer
+    // - Alert admin
+    // - Start timer for theft protection
+    
+    res.json({
+      message: 'Alert logged successfully',
+      alert_type,
+      timestamp: new Date()
+    });
+  } catch (error) {
+    res.status(500).json({ message: 'Server error', error: error.message });
+  }
+});
+
+module.exports = router;
