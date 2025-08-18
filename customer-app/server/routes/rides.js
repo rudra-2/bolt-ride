@@ -3,6 +3,7 @@ const RideHistory = require('../models/RideHistory');
 const Vehicle = require('../models/Vehicle');
 const Customer = require('../models/Customer');
 const ParkingStation = require('../models/ParkingStation');
+const ActiveRideSession = require('../models/ActiveRideSession');
 const auth = require('../middleware/auth');
 const router = express.Router();
 
@@ -53,6 +54,22 @@ router.post('/start', auth, async (req, res) => {
       { status: 'in_use' }
     );
 
+    // Create active session for ride persistence
+    const sessionData = {
+      customer_id,
+      ride_id: ride.ride_id,
+      vehicle_id,
+      session_start_time: new Date(),
+      start_location: {
+        latitude: req.body.latitude || 0,
+        longitude: req.body.longitude || 0
+      },
+      browser_session_id: req.body.browser_session_id || `session_${Date.now()}`
+    };
+
+    const activeSession = new ActiveRideSession(sessionData);
+    await activeSession.save();
+
     res.status(201).json({
       message: 'Ride started successfully',
       ride: {
@@ -60,7 +77,9 @@ router.post('/start', auth, async (req, res) => {
         vehicle_id: ride.vehicle_id,
         pickup_station_id: ride.pickup_station_id,
         start_date: ride.start_date
-      }
+      },
+      session_id: activeSession._id,
+      redirect_to_ride_page: true
     });
   } catch (error) {
     res.status(500).json({ message: 'Server error', error: error.message });
@@ -116,6 +135,12 @@ router.post('/end', auth, async (req, res) => {
         status: 'available',
         station_id: drop_station_id
       }
+    );
+
+    // Deactivate the ride session
+    await ActiveRideSession.findOneAndUpdate(
+      { customer_id, ride_id, session_active: true },
+      { session_active: false }
     );
 
     res.json({
