@@ -25,6 +25,7 @@ app.use('/api/auth', require('./routes/auth'));
 app.use('/api/stations', require('./routes/stations'));
 app.use('/api/vehicles', require('./routes/vehicles'));
 app.use('/api/rides', require('./routes/rides'));
+app.use('/api/sessions', require('./routes/sessions'));
 app.use('/api/wallet', require('./routes/wallet'));
 app.use('/api/passes', require('./routes/passes'));
 app.use('/api/profile', require('./routes/profile'));
