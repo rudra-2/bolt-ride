@@ -2,10 +2,68 @@ const express = require('express');
 const bcrypt = require('bcryptjs');
 const jwt = require('jsonwebtoken');
 const Customer = require('../models/Customer');
+const { validate, schemas } = require('../middleware/validation');
 const router = express.Router();
 
+/**
+ * @swagger
+ * /auth/register:
+ *   post:
+ *     summary: Register a new customer
+ *     tags: [Authentication]
+ *     requestBody:
+ *       required: true
+ *       content:
+ *         application/json:
+ *           schema:
+ *             type: object
+ *             required:
+ *               - customer_name
+ *               - email
+ *               - mobile
+ *               - password
+ *               - license_number
+ *             properties:
+ *               customer_name:
+ *                 type: string
+ *                 example: "John Doe"
+ *               email:
+ *                 type: string
+ *                 format: email
+ *                 example: "john@example.com"
+ *               mobile:
+ *                 type: string
+ *                 example: "9876543210"
+ *               password:
+ *                 type: string
+ *                 minLength: 6
+ *                 example: "password123"
+ *               license_number:
+ *                 type: string
+ *                 example: "DL1234567890"
+ *     responses:
+ *       201:
+ *         description: Customer registered successfully
+ *         content:
+ *           application/json:
+ *             schema:
+ *               type: object
+ *               properties:
+ *                 message:
+ *                   type: string
+ *                 token:
+ *                   type: string
+ *                 customer:
+ *                   $ref: '#/components/schemas/Customer'
+ *       400:
+ *         description: Validation error or customer already exists
+ *         content:
+ *           application/json:
+ *             schema:
+ *               $ref: '#/components/schemas/Error'
+ */
 // Register
-router.post('/register', async (req, res) => {
+router.post('/register', validate(schemas.register), async (req, res) => {
   try {
     const { customer_name, email, mobile, password, license_number } = req.body;
 
@@ -62,8 +120,52 @@ router.post('/register', async (req, res) => {
   }
 });
 
+/**
+ * @swagger
+ * /auth/login:
+ *   post:
+ *     summary: Login customer
+ *     tags: [Authentication]
+ *     requestBody:
+ *       required: true
+ *       content:
+ *         application/json:
+ *           schema:
+ *             type: object
+ *             required:
+ *               - email
+ *               - password
+ *             properties:
+ *               email:
+ *                 type: string
+ *                 format: email
+ *                 example: "john@example.com"
+ *               password:
+ *                 type: string
+ *                 example: "password123"
+ *     responses:
+ *       200:
+ *         description: Login successful
+ *         content:
+ *           application/json:
+ *             schema:
+ *               type: object
+ *               properties:
+ *                 message:
+ *                   type: string
+ *                 token:
+ *                   type: string
+ *                 customer:
+ *                   $ref: '#/components/schemas/Customer'
+ *       400:
+ *         description: Invalid credentials
+ *         content:
+ *           application/json:
+ *             schema:
+ *               $ref: '#/components/schemas/Error'
+ */
 // Login
-router.post('/login', async (req, res) => {
+router.post('/login', validate(schemas.login), async (req, res) => {
   try {
     const { email, password } = req.body;
 
