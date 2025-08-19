@@ -61,3 +61,8 @@ Pipfile.lock
 
 # Ignore migrations (if not tracked)
 **/migrations/
+
+# Large 3D model files
+*.glb
+*.gltf
+customer-app/client/public/models/yt_capra_2020_enduro_bike_3dprint.glb

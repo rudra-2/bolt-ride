@@ -6,7 +6,7 @@ require('dotenv').config();
 
 const seedData = async () => {
   try {
-    await mongoose.connect(process.env.MONGODB_URI || 'mongodb://localhost:27017/bolt-ride-customer');
+    await mongoose.connect(process.env.MONGODB_URI || 'mongodb://localhost:27017/boltride');
     
     console.log('Connected to MongoDB');
     

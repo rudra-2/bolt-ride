@@ -13,7 +13,7 @@ app.use(cors());
 app.use(express.json());
 
 // Database connection
-mongoose.connect(process.env.MONGODB_URI || 'mongodb://localhost:27017/bolt-ride-customer')
+mongoose.connect(process.env.MONGODB_URI || 'mongodb://localhost:27017/boltride')
   .then(() => {
     console.log('Connected to MongoDB');
   })

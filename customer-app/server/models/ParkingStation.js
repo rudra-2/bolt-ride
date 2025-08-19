@@ -10,21 +10,27 @@ const parkingStationSchema = new mongoose.Schema({
     type: String,
     required: true
   },
-  station_area: {
+  location: {
     type: String,
     required: true
   },
-  capacity: {
+  vehicle_capacity: {
     type: Number,
-    required: true
+    required: true,
+    default: 50
   },
   extra_capacity: {
     type: Number,
-    default: 0
+    required: true,
+    default: 5
   },
   charging_ports: {
     type: Number,
     required: true
+  },
+  password: {
+    type: String,
+    required: true // Admin authentication
   },
   coordinates: {
     latitude: {
@@ -37,7 +43,8 @@ const parkingStationSchema = new mongoose.Schema({
     }
   }
 }, {
-  timestamps: true
+  timestamps: true,
+  collection: 'stations' // Match admin-app collection name
 });
 
 module.exports = mongoose.model('ParkingStation', parkingStationSchema);

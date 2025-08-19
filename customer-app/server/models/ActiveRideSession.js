@@ -43,7 +43,8 @@ const activeRideSessionSchema = new mongoose.Schema({
     required: true
   }
 }, {
-  timestamps: true
+  timestamps: true,
+  collection: 'active_ride_sessions' // Keep separate as it's new functionality
 });
 
 // Auto-expire sessions after 4 hours of inactivity

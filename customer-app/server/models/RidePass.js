@@ -28,7 +28,8 @@ const ridePassSchema = new mongoose.Schema({
     default: 'active'
   }
 }, {
-  timestamps: true
+  timestamps: true,
+  collection: 'ride_passes' // Keep separate as it's new functionality
 });
 
 module.exports = mongoose.model('RidePass', ridePassSchema);

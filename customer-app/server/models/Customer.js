@@ -33,7 +33,8 @@ const customerSchema = new mongoose.Schema({
     default: 0
   }
 }, {
-  timestamps: true
+  timestamps: true,
+  collection: 'customers' // Keep customers as it's not used in admin-app
 });
 
 module.exports = mongoose.model('Customer', customerSchema);

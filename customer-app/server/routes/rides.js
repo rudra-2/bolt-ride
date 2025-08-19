@@ -27,11 +27,11 @@ router.post('/start', auth, async (req, res) => {
     // Check if customer has any ongoing ride
     const ongoingRide = await RideHistory.findOne({ 
       customer_id, 
-      status: 'ongoing' 
+      status: 'active' 
     });
     
     if (ongoingRide) {
-      return res.status(400).json({ message: 'You already have an ongoing ride' });
+      return res.status(400).json({ message: 'You already have an active ride' });
     }
 
     // Generate ride_id
@@ -41,9 +41,12 @@ router.post('/start', auth, async (req, res) => {
     const ride = new RideHistory({
       ride_id,
       customer_id,
+      user_id: customer_id, // Map to admin-app field
+      user_name: req.customer.customer_name,
       vehicle_id,
-      pickup_station_id: station_id,
-      start_date: new Date()
+      vehicle_number: vehicle.vehicle_number || vehicle_id,
+      station_id: station_id,
+      start_time: new Date()
     });
 
     await ride.save();
@@ -75,8 +78,8 @@ router.post('/start', auth, async (req, res) => {
       ride: {
         ride_id: ride.ride_id,
         vehicle_id: ride.vehicle_id,
-        pickup_station_id: ride.pickup_station_id,
-        start_date: ride.start_date
+        station_id: ride.station_id,
+        start_time: ride.start_time
       },
       session_id: activeSession._id,
       redirect_to_ride_page: true
@@ -98,8 +101,8 @@ router.post('/end', auth, async (req, res) => {
       return res.status(404).json({ message: 'Ride not found' });
     }
 
-    if (ride.status !== 'ongoing') {
-      return res.status(400).json({ message: 'Ride is not ongoing' });
+    if (ride.status !== 'active') {
+      return res.status(400).json({ message: 'Ride is not active' });
     }
 
     // Calculate fare (₹5 base + ₹2 per km + ₹1 per minute)
@@ -114,12 +117,14 @@ router.post('/end', auth, async (req, res) => {
     }
 
     // Update ride
-    ride.drop_station_id = drop_station_id;
-    ride.distance = distance;
-    ride.total_time = total_time;
-    ride.end_date = new Date();
-    ride.fare_collected = totalFare;
+    ride.station_id = drop_station_id; // Update end station
+    ride.distance_km = distance;
+    ride.duration_minutes = total_time;
+    ride.end_time = new Date();
+    ride.fare = totalFare;
+    ride.amount = totalFare; // Alias for admin-app compatibility
     ride.status = 'completed';
+    ride.payment_status = 'paid';
     await ride.save();
 
     // Update customer wallet
@@ -147,11 +152,11 @@ router.post('/end', auth, async (req, res) => {
       message: 'Ride ended successfully',
       ride: {
         ride_id: ride.ride_id,
-        distance: ride.distance,
-        total_time: ride.total_time,
-        fare_collected: ride.fare_collected,
-        start_date: ride.start_date,
-        end_date: ride.end_date
+        distance_km: ride.distance_km,
+        duration_minutes: ride.duration_minutes,
+        fare: ride.fare,
+        start_time: ride.start_time,
+        end_time: ride.end_time
       }
     });
   } catch (error) {
@@ -165,7 +170,7 @@ router.get('/history', auth, async (req, res) => {
     const customer_id = req.customer.customer_id;
     
     const rides = await RideHistory.find({ customer_id })
-      .sort({ start_date: -1 })
+      .sort({ start_time: -1 })
       .limit(50);
 
     res.json({
