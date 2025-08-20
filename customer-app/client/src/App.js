@@ -112,6 +112,7 @@ import Rides from "./pages/Rides";
 import BuyPasses from "./pages/BuyPasses";
 import NewActiveRide from "./pages/NewActiveRide";
 import UnlockVehicle from "./pages/UnlockVehicle";
+import VehicleTestComponent from "./pages/VehicleTestComponent";
 
 export default function App() {
   return (
@@ -127,6 +128,7 @@ export default function App() {
         <Route path="/buy-passes" element={<BuyPasses />} />
         <Route path="/active-ride" element={<NewActiveRide />} />
         <Route path="/unlock-vehicle" element={<UnlockVehicle />} />
+        <Route path="/test-vehicle" element={<VehicleTestComponent />} />
       </Routes>
     </Router>
   );

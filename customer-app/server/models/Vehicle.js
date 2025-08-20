@@ -66,7 +66,7 @@ const vehicleSchema = new mongoose.Schema({
   }
 }, {
   timestamps: true,
-  collection: 'vehicle_details' // Match admin-app collection name
+  collection: 'vehicle_details' // Use the actual collection name from database
 });
 
 module.exports = mongoose.model('Vehicle', vehicleSchema);

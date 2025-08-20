@@ -1,7 +1,7 @@
 import React, { useState, useEffect } from 'react';
 import { useLocation, useNavigate } from 'react-router-dom';
 import { Html5QrcodeScanner } from 'html5-qrcode';
-import { startRide, getVehicleDetails, getVehicleByQR } from '../api';
+import { startRide, getVehicleDetails, getVehicleByQR, vehiclesAPI } from '../api';
 
 const UnlockVehicle = () => {
   const location = useLocation();
@@ -59,27 +59,14 @@ const UnlockVehicle = () => {
     setError('');
 
     try {
-      // First try to get vehicle by QR code
-      let vehicle;
-      try {
-        const qrResponse = await getVehicleByQR(vehicleId);
-        vehicle = qrResponse.vehicle;
-        console.log('Vehicle found by QR:', vehicle);
-      } catch (qrErr) {
-        console.log('QR lookup failed, trying vehicle ID:', qrErr.message);
-        
-        // If QR lookup fails, try using the data as vehicle_id
-        try {
-          const vehicleResponse = await getVehicleDetails(vehicleId);
-          vehicle = vehicleResponse.vehicle;
-          console.log('Vehicle found by ID:', vehicle);
-        } catch (idErr) {
-          console.error('Both QR and ID lookup failed:', idErr.message);
-          setError('Vehicle not found. Please scan a valid QR code.');
-          return;
-        }
-      }
+      console.log('Validating vehicle:', vehicleId);
+
+      // Use the scan endpoint which handles both QR codes and vehicle IDs
+      const response = await vehiclesAPI.scan(vehicleId);
+      const vehicle = response.data.vehicle;
       
+      console.log('Vehicle found:', vehicle);
+
       if (!vehicle) {
         setError('Vehicle not found');
         return;
@@ -92,7 +79,7 @@ const UnlockVehicle = () => {
       }
 
       // Check if vehicle is at correct station (if we have station info)
-      if (selectedStation && vehicle.station_id && vehicle.station_id !== selectedStation.station_id) {
+      if (selectedStation && vehicle.station_id && vehicle.station_id.toString() !== selectedStation.station_id.toString()) {
         setError(`Vehicle is not at ${selectedStation.station_name}. Please scan a vehicle at this station.`);
         return;
       }
@@ -106,7 +93,8 @@ const UnlockVehicle = () => {
       setVehicleDetails(vehicle);
     } catch (err) {
       console.error('Error validating vehicle:', err);
-      setError(err.response?.data?.message || 'Vehicle not found or invalid QR code');
+      const errorMessage = err.response?.data?.message || 'Vehicle not found or invalid QR code';
+      setError(errorMessage);
     } finally {
       setLoading(false);
     }

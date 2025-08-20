@@ -84,34 +84,37 @@ const QRScanner = ({ onScan, onClose, stationId }) => {
         try {
             setIsScanning(false);
 
-            // Parse QR code data (expected format: vehicle_id or JSON with vehicle info)
-            let vehicleId;
+            // Clean the QR data
+            let vehicleIdentifier = qrData.trim();
+
+            // Parse QR code data if it's JSON format
             try {
                 const parsedData = JSON.parse(qrData);
-                vehicleId = parsedData.vehicle_id || parsedData.id;
+                vehicleIdentifier = parsedData.vehicle_id || parsedData.id || parsedData.qr_code || qrData;
             } catch {
-                vehicleId = qrData; // Simple string format
+                // Not JSON, use as-is
+                vehicleIdentifier = qrData;
             }
 
-            if (!vehicleId) {
+            if (!vehicleIdentifier) {
                 throw new Error('Invalid QR code format');
             }
 
-            console.log(`Vehicle ID: ${vehicleId} ${isManual ? '(Manually Entered)' : '(QR Scanned)'}`);
+            console.log(`Vehicle Identifier: ${vehicleIdentifier} ${isManual ? '(Manually Entered)' : '(QR Scanned)'}`);
 
             // If manually entered, show confirmation
             if (isManual) {
-                setManuallyEnteredId(vehicleId);
+                setManuallyEnteredId(vehicleIdentifier);
             }
 
-            // Verify vehicle is available at this station
+            // Use the vehicles scan API which handles both QR codes and vehicle IDs
             const response = await fetch(`http://localhost:5000/api/vehicles/scan`, {
                 method: 'POST',
                 headers: {
                     'Content-Type': 'application/json',
                     'Authorization': `Bearer ${localStorage.getItem('token')}`
                 },
-                body: JSON.stringify({ qr_code: vehicleId })
+                body: JSON.stringify({ qr_code: vehicleIdentifier })
             });
 
             if (!response.ok) {
@@ -119,13 +122,14 @@ const QRScanner = ({ onScan, onClose, stationId }) => {
                 throw new Error(errorData.message || 'Failed to verify vehicle availability');
             }
 
-            const vehicleData = await response.json();
+            const result = await response.json();
+            console.log('Vehicle scan result:', result);
 
             // Call parent component's onScan callback
             onScan({
-                vehicleId,
+                vehicleId: vehicleIdentifier,
                 stationId,
-                vehicleData,
+                vehicleData: result.vehicle,
                 entryMethod: isManual ? 'manual' : 'qr_scan'
             });
 
