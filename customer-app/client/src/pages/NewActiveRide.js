@@ -3,7 +3,7 @@ import { useLocation, useNavigate } from "react-router-dom";
 import { MapContainer, TileLayer, Marker, Polyline, Circle, Popup, Polygon } from "react-leaflet";
 import "leaflet/dist/leaflet.css";
 import L from "leaflet";
-import API from "../api";
+import { stationsAPI, ridesAPI, walletAPI } from "../api";
 import Navbar from "../components/Navbar";
 
 const ActiveRide = () => {
@@ -20,6 +20,8 @@ const ActiveRide = () => {
   const [loading, setLoading] = useState(false);
   const [error, setError] = useState('');
   const [rideStartTime] = useState(new Date());
+  const [showEmergencyContact, setShowEmergencyContact] = useState(false);
+  const [walletBalance, setWalletBalance] = useState(0);
 
   // Ahmedabad City Boundary Coordinates (same as Dashboard)
   const ahmedabadBoundary = [
@@ -104,14 +106,27 @@ const ActiveRide = () => {
       const elapsedTime = Math.floor((currentTime - rideStartTime) / 1000);
       setRideTime(elapsedTime);
       
-      // Calculate fare: ₹2 per minute + ₹5 per km
+      // Calculate fare: ₹5 base + ₹2 per km + ₹1 per minute (as per backend logic)
       const minutes = Math.floor(elapsedTime / 60);
-      const fare = (minutes * 2) + (totalDistance * 5);
-      setCurrentFare(Math.max(fare, 10)); // Minimum ₹10
+      const baseFare = 5;
+      const distanceFare = totalDistance * 2;
+      const timeFare = minutes * 1;
+      const fare = baseFare + distanceFare + timeFare;
+      setCurrentFare(Math.max(fare, 5)); // Minimum ₹5
+      
+      // Check if wallet balance is sufficient
+      if (walletBalance < fare && fare > 5) {
+        setError(`Insufficient wallet balance! Current fare: ₹${fare.toFixed(2)}, Wallet: ₹${walletBalance.toFixed(2)}`);
+      } else if (error.includes('Insufficient wallet balance')) {
+        setError(''); // Clear error if balance is now sufficient
+      }
     }, 1000);
 
     // Fetch nearby stations
     fetchNearbyStations();
+
+    // Fetch wallet balance
+    fetchWalletBalance();
 
     return () => {
       clearInterval(locationInterval);
@@ -123,10 +138,19 @@ const ActiveRide = () => {
     if (!currentLocation) return;
     
     try {
-      const response = await API.get(`/stations/nearby?lat=${currentLocation.lat}&lng=${currentLocation.lng}`);
-      setNearbyStations(response.data.stations);
+      const response = await stationsAPI.getNearby(currentLocation.lat, currentLocation.lng);
+      setNearbyStations(response.data.stations || response.data);
     } catch (err) {
       console.error('Error fetching stations:', err);
+    }
+  };
+
+  const fetchWalletBalance = async () => {
+    try {
+      const response = await walletAPI.getBalance();
+      setWalletBalance(response.data.wallet_balance || 0);
+    } catch (err) {
+      console.error('Error fetching wallet balance:', err);
     }
   };
 
@@ -141,28 +165,30 @@ const ActiveRide = () => {
 
     setLoading(true);
     try {
-      await API.post('/rides/end', {
+      const endRideData = {
         ride_id: rideId,
-        end_station_id: endStation.station_id,
+        drop_station_id: endStation.station_id, // Use drop_station_id as per backend model
         end_location: {
           latitude: currentLocation.lat,
           longitude: currentLocation.lng
         },
-        total_distance: totalDistance,
-        ride_duration: rideTime,
-        fare_amount: currentFare
-      });
+        distance: totalDistance, // Use 'distance' as per backend
+        total_time: Math.floor(rideTime / 60) // Convert seconds to minutes as per backend
+      };
 
-      // Update wallet balance
-      await API.post('/wallet/deduct', { amount: currentFare });
+      console.log('Ending ride with data:', endRideData);
+      
+      const response = await ridesAPI.end(endRideData);
+      console.log('End ride response:', response.data);
 
-      // Navigate back to dashboard
+      // Navigate back to dashboard with success message
       navigate('/dashboard', {
         state: {
-          message: `Ride completed! Total fare: ₹${currentFare.toFixed(2)}`
+          message: `Ride completed! Total fare: ₹${response.data.ride?.fare || currentFare.toFixed(2)}`
         }
       });
     } catch (err) {
+      console.error('End ride error:', err);
       setError(err.response?.data?.message || 'Failed to end ride');
     } finally {
       setLoading(false);
@@ -198,7 +224,7 @@ const ActiveRide = () => {
 
   return (
     <div className="min-h-screen bg-gradient-to-br from-gray-900 via-black to-gray-800 text-white">
-      <Navbar profile={{}} walletBalance={0} onLogout={() => navigate('/login')} />
+      <Navbar profile={{}} walletBalance={walletBalance} onLogout={() => navigate('/login')} />
       
       <div className="max-w-7xl mx-auto p-6">
         {/* Header */}
@@ -210,6 +236,7 @@ const ActiveRide = () => {
           <div className="text-right">
             <div className="text-2xl font-bold text-evgreen">₹{currentFare.toFixed(2)}</div>
             <div className="text-sm text-gray-400">Current Fare</div>
+            <div className="text-sm text-blue-400 mt-1">Wallet: ₹{walletBalance.toFixed(2)}</div>
           </div>
         </div>
 
@@ -221,7 +248,7 @@ const ActiveRide = () => {
         )}
 
         {/* Ride Stats */}
-        <div className="grid grid-cols-1 md:grid-cols-3 gap-6 mb-6">
+        <div className="grid grid-cols-1 md:grid-cols-4 gap-6 mb-6">
           <div className="bg-gray-800/80 rounded-xl p-6 text-center border border-gray-700/50">
             <div className="text-3xl font-bold text-blue-400">{formatTime(rideTime)}</div>
             <div className="text-gray-400">Ride Time</div>
@@ -236,7 +263,59 @@ const ActiveRide = () => {
             </div>
             <div className="text-gray-400">Avg Speed</div>
           </div>
+          <div className="bg-gray-800/80 rounded-xl p-6 text-center border border-gray-700/50">
+            <button
+              onClick={() => setShowEmergencyContact(true)}
+              className="w-full bg-red-600 hover:bg-red-700 text-white py-2 px-4 rounded-lg font-semibold transition-colors"
+            >
+              🚨 Emergency
+            </button>
+            <div className="text-gray-400 text-sm mt-1">Contact Help</div>
+          </div>
         </div>
+
+        {/* Emergency Contact Modal */}
+        {showEmergencyContact && (
+          <div className="fixed inset-0 bg-black/50 flex items-center justify-center z-50 p-4">
+            <div className="bg-gray-800 rounded-2xl p-6 max-w-md w-full border border-gray-700">
+              <h3 className="text-xl font-bold text-red-400 mb-4">🚨 Emergency Contact</h3>
+              <div className="space-y-4">
+                <div className="bg-gray-700/50 rounded-lg p-4">
+                  <h4 className="font-semibold text-evgreen mb-2">Customer Support</h4>
+                  <p className="text-white text-lg font-bold">📞 +91 9876543210</p>
+                  <p className="text-gray-400 text-sm">24/7 Support Available</p>
+                </div>
+                <div className="bg-gray-700/50 rounded-lg p-4">
+                  <h4 className="font-semibold text-orange-400 mb-2">Police Emergency</h4>
+                  <p className="text-white text-lg font-bold">📞 100</p>
+                  <p className="text-gray-400 text-sm">For serious emergencies</p>
+                </div>
+                <div className="bg-gray-700/50 rounded-lg p-4">
+                  <h4 className="font-semibold text-blue-400 mb-2">Your Current Location</h4>
+                  <p className="text-white text-sm">
+                    Lat: {currentLocation?.lat?.toFixed(6)}<br/>
+                    Lng: {currentLocation?.lng?.toFixed(6)}
+                  </p>
+                  <p className="text-gray-400 text-xs">Share this with emergency services</p>
+                </div>
+              </div>
+              <div className="flex gap-3 mt-6">
+                <button
+                  onClick={() => setShowEmergencyContact(false)}
+                  className="flex-1 bg-gray-600 hover:bg-gray-700 text-white py-2 px-4 rounded-lg font-semibold transition-colors"
+                >
+                  Close
+                </button>
+                <a
+                  href="tel:+919876543210"
+                  className="flex-1 bg-evgreen hover:bg-green-600 text-black py-2 px-4 rounded-lg font-semibold text-center transition-colors"
+                >
+                  Call Support
+                </a>
+              </div>
+            </div>
+          </div>
+        )}
 
         {/* Map */}
         <div className="grid grid-cols-1 lg:grid-cols-3 gap-6">

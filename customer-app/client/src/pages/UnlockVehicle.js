@@ -105,7 +105,7 @@ const UnlockVehicle = () => {
 
     setLoading(true);
     try {
-      const rideData = await startRide({
+      const rideResponse = await startRide({
         vehicle_id: vehicleDetails.vehicle_id,
         start_station_id: selectedStation.station_id,
         start_location: {
@@ -114,16 +114,19 @@ const UnlockVehicle = () => {
         }
       });
 
+      console.log('Start ride response:', rideResponse);
+
       // Navigate to active ride with ride details
       navigate('/active-ride', {
         state: {
-          rideId: rideData.ride_id,
+          rideId: rideResponse.data.ride?.ride_id || rideResponse.data.ride_id,
           vehicleDetails,
           startStation: selectedStation,
           userLocation
         }
       });
     } catch (err) {
+      console.error('Start ride error:', err);
       setError(err.response?.data?.message || 'Failed to start ride');
     } finally {
       setLoading(false);
