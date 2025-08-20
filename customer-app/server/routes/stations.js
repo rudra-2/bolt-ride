@@ -19,22 +19,34 @@ router.get('/nearby', auth, async (req, res) => {
     // Get all stations
     const stations = await ParkingStation.find();
 
-    // Calculate distance and sort
-    const stationsWithDistance = stations.map(station => {
+    // Calculate distance and get available vehicles count for each station
+    const stationsWithDetails = await Promise.all(stations.map(async (station) => {
       const distance = calculateDistance(
         userLat, userLng,
         station.coordinates.latitude,
         station.coordinates.longitude
       );
-      return { ...station._doc, distance };
-    });
+
+      // Count available vehicles at this station
+      const availableVehicles = await Vehicle.countDocuments({
+        station_id: station.station_id,
+        status: 'available',
+        battery: { $gte: 20 } // Only count vehicles with at least 20% battery
+      });
+
+      return { 
+        ...station._doc, 
+        distance,
+        available_bikes: availableVehicles // Add available bikes count
+      };
+    }));
 
     // Sort by distance
-    stationsWithDistance.sort((a, b) => a.distance - b.distance);
+    stationsWithDetails.sort((a, b) => a.distance - b.distance);
 
     res.json({
       message: 'Nearby stations fetched successfully',
-      stations: stationsWithDistance
+      stations: stationsWithDetails
     });
   } catch (error) {
     res.status(500).json({ message: 'Server error', error: error.message });

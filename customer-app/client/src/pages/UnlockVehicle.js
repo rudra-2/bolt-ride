@@ -15,50 +15,72 @@ const UnlockVehicle = () => {
   const [scanner, setScanner] = useState(null);
   const [manualEntry, setManualEntry] = useState(false);
   const [scannerActive, setScannerActive] = useState(true);
+  const [scannerInitialized, setScannerInitialized] = useState(false);
 
   useEffect(() => {
     if (!selectedStation) {
       navigate('/dashboard');
       return;
     }
+  }, [selectedStation, navigate]);
 
-    // Only initialize QR Scanner if not in manual entry mode and no vehicle details
-    if (!manualEntry && !vehicleDetails && scannerActive) {
-      initializeScanner();
+  // Separate effect for scanner management
+  useEffect(() => {
+    if (scannerActive && !manualEntry && !vehicleDetails && !scannerInitialized) {
+      const timer = setTimeout(() => {
+        initializeScanner();
+      }, 100); // Small delay to ensure DOM is ready
+      
+      return () => clearTimeout(timer);
+    } else if (!scannerActive || manualEntry || vehicleDetails) {
+      cleanupScanner();
     }
+  }, [scannerActive, manualEntry, vehicleDetails, scannerInitialized]);
 
+  // Cleanup on component unmount
+  useEffect(() => {
     return () => {
       cleanupScanner();
     };
-  }, [selectedStation, navigate, manualEntry, vehicleDetails, scannerActive]);
+  }, []);
 
   const initializeScanner = () => {
-    // Clear any existing scanner first
-    cleanupScanner();
+    // Prevent multiple initializations
+    if (scannerInitialized || scanner) {
+      return;
+    }
 
-    const qrScanner = new Html5QrcodeScanner(
-      "qr-reader",
-      { 
-        fps: 10, 
-        qrbox: { width: 250, height: 250 },
-        aspectRatio: 1.0
-      },
-      false
-    );
+    try {
+      const qrScanner = new Html5QrcodeScanner(
+        "qr-reader",
+        { 
+          fps: 10, 
+          qrbox: { width: 250, height: 250 },
+          aspectRatio: 1.0
+        },
+        false
+      );
 
-    qrScanner.render(onScanSuccess, onScanFailure);
-    setScanner(qrScanner);
+      qrScanner.render(onScanSuccess, onScanFailure);
+      setScanner(qrScanner);
+      setScannerInitialized(true);
+      console.log('QR Scanner initialized');
+    } catch (error) {
+      console.error('Error initializing scanner:', error);
+    }
   };
 
   const cleanupScanner = () => {
     if (scanner) {
       try {
         scanner.clear();
+        console.log('QR Scanner cleaned up');
       } catch (error) {
-        console.log('Scanner cleanup error:', error);
+        console.error('Scanner cleanup error:', error);
       }
       setScanner(null);
     }
+    setScannerInitialized(false);
   };
 
   const onScanSuccess = (decodedText) => {
@@ -162,14 +184,15 @@ const UnlockVehicle = () => {
 
   const toggleManualEntry = () => {
     const newManualEntry = !manualEntry;
-    setManualEntry(newManualEntry);
     
     if (newManualEntry) {
-      // Switching to manual entry - stop scanner
+      // Switching to manual entry - stop scanner immediately
       cleanupScanner();
       setScannerActive(false);
+      setManualEntry(newManualEntry);
     } else {
       // Switching back to scanner - restart it if no vehicle details
+      setManualEntry(newManualEntry);
       if (!vehicleDetails) {
         setScannerActive(true);
       }
@@ -177,6 +200,10 @@ const UnlockVehicle = () => {
   };
 
   const resetVehicleSelection = () => {
+    // Clean up scanner first
+    cleanupScanner();
+    
+    // Reset all states
     setVehicleDetails(null);
     setScannedVehicleId('');
     setError('');
@@ -241,11 +268,19 @@ const UnlockVehicle = () => {
                 </div>
               )}
 
+              {/* Loading indicator for scanner */}
+              {!manualEntry && scannerActive && !scannerInitialized && (
+                <div className="flex justify-center items-center py-8">
+                  <div className="text-gray-400">Initializing camera...</div>
+                </div>
+              )}
+
               {/* Manual Entry Option */}
               <div className="text-center">
                 <button
                   onClick={toggleManualEntry}
                   className="text-evgreen hover:text-green-400 transition-colors"
+                  disabled={loading}
                 >
                   {manualEntry ? 'Switch to QR Scanner' : 'Having trouble? Enter Vehicle ID manually'}
                 </button>
