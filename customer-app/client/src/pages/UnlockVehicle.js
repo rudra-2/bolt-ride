@@ -14,6 +14,7 @@ const UnlockVehicle = () => {
   const [vehicleDetails, setVehicleDetails] = useState(null);
   const [scanner, setScanner] = useState(null);
   const [manualEntry, setManualEntry] = useState(false);
+  const [scannerActive, setScannerActive] = useState(true);
 
   useEffect(() => {
     if (!selectedStation) {
@@ -21,7 +22,20 @@ const UnlockVehicle = () => {
       return;
     }
 
-    // Initialize QR Scanner
+    // Only initialize QR Scanner if not in manual entry mode and no vehicle details
+    if (!manualEntry && !vehicleDetails && scannerActive) {
+      initializeScanner();
+    }
+
+    return () => {
+      cleanupScanner();
+    };
+  }, [selectedStation, navigate, manualEntry, vehicleDetails, scannerActive]);
+
+  const initializeScanner = () => {
+    // Clear any existing scanner first
+    cleanupScanner();
+
     const qrScanner = new Html5QrcodeScanner(
       "qr-reader",
       { 
@@ -34,20 +48,24 @@ const UnlockVehicle = () => {
 
     qrScanner.render(onScanSuccess, onScanFailure);
     setScanner(qrScanner);
+  };
 
-    return () => {
-      if (qrScanner) {
-        qrScanner.clear();
+  const cleanupScanner = () => {
+    if (scanner) {
+      try {
+        scanner.clear();
+      } catch (error) {
+        console.log('Scanner cleanup error:', error);
       }
-    };
-  }, [selectedStation, navigate]);
+      setScanner(null);
+    }
+  };
 
   const onScanSuccess = (decodedText) => {
     setScannedVehicleId(decodedText);
     validateVehicle(decodedText);
-    if (scanner) {
-      scanner.clear();
-    }
+    cleanupScanner();
+    setScannerActive(false);
   };
 
   const onScanFailure = (error) => {
@@ -135,8 +153,35 @@ const UnlockVehicle = () => {
 
   const handleManualEntry = () => {
     if (scannedVehicleId.trim()) {
+      // Stop scanner when switching to manual entry
+      cleanupScanner();
+      setScannerActive(false);
       validateVehicle(scannedVehicleId.trim());
     }
+  };
+
+  const toggleManualEntry = () => {
+    const newManualEntry = !manualEntry;
+    setManualEntry(newManualEntry);
+    
+    if (newManualEntry) {
+      // Switching to manual entry - stop scanner
+      cleanupScanner();
+      setScannerActive(false);
+    } else {
+      // Switching back to scanner - restart it if no vehicle details
+      if (!vehicleDetails) {
+        setScannerActive(true);
+      }
+    }
+  };
+
+  const resetVehicleSelection = () => {
+    setVehicleDetails(null);
+    setScannedVehicleId('');
+    setError('');
+    setManualEntry(false);
+    setScannerActive(true);
   };
 
   return (
@@ -190,17 +235,19 @@ const UnlockVehicle = () => {
           {!vehicleDetails && (
             <div className="space-y-6">
               {/* QR Scanner */}
-              <div className="flex justify-center">
-                <div id="qr-reader" className="w-full max-w-md"></div>
-              </div>
+              {!manualEntry && scannerActive && (
+                <div className="flex justify-center">
+                  <div id="qr-reader" className="w-full max-w-md"></div>
+                </div>
+              )}
 
               {/* Manual Entry Option */}
               <div className="text-center">
                 <button
-                  onClick={() => setManualEntry(!manualEntry)}
+                  onClick={toggleManualEntry}
                   className="text-evgreen hover:text-green-400 transition-colors"
                 >
-                  Having trouble? Enter Vehicle ID manually
+                  {manualEntry ? 'Switch to QR Scanner' : 'Having trouble? Enter Vehicle ID manually'}
                 </button>
               </div>
 
@@ -281,13 +328,23 @@ const UnlockVehicle = () => {
               </div>
             </div>
 
-            <button
-              onClick={handleStartRide}
-              disabled={loading}
-              className="w-full bg-evgreen hover:bg-green-600 disabled:bg-gray-600 text-white py-4 rounded-xl font-bold text-lg transition-all duration-300 transform hover:scale-105"
-            >
-              {loading ? 'Starting Ride...' : 'Start Ride'}
-            </button>
+            <div className="flex gap-4">
+              <button
+                onClick={handleStartRide}
+                disabled={loading}
+                className="flex-1 bg-evgreen hover:bg-green-600 disabled:bg-gray-600 text-white py-4 rounded-xl font-bold text-lg transition-all duration-300 transform hover:scale-105"
+              >
+                {loading ? 'Starting Ride...' : 'Start Ride'}
+              </button>
+              
+              <button
+                onClick={resetVehicleSelection}
+                disabled={loading}
+                className="bg-gray-600 hover:bg-gray-700 disabled:bg-gray-600 text-white py-4 px-6 rounded-xl font-bold text-lg transition-colors"
+              >
+                Scan Different
+              </button>
+            </div>
           </div>
         )}
 
