@@ -43,16 +43,27 @@ const Rides = () => {
   };
 
   const formatDate = (dateString) => {
-    return new Date(dateString).toLocaleDateString('en-US', {
-      year: 'numeric',
-      month: 'short',
-      day: 'numeric',
-      hour: '2-digit',
-      minute: '2-digit'
-    });
+    if (!dateString) return 'N/A';
+    
+    try {
+      const date = new Date(dateString);
+      if (isNaN(date.getTime())) return 'Invalid Date';
+      
+      return date.toLocaleDateString('en-US', {
+        year: 'numeric',
+        month: 'short',
+        day: 'numeric',
+        hour: '2-digit',
+        minute: '2-digit'
+      });
+    } catch (error) {
+      return 'Invalid Date';
+    }
   };
 
   const formatDuration = (minutes) => {
+    if (!minutes || minutes === 0) return '0 min';
+    
     if (minutes < 60) {
       return `${minutes} min`;
     }
@@ -129,7 +140,7 @@ const Rides = () => {
             <div className={`bg-gradient-to-br ${themeClasses.card} backdrop-blur-sm rounded-xl p-4 border text-center`}>
               <div className="text-2xl text-blue-400 mb-2">📏</div>
               <div className={`text-2xl font-bold ${themeClasses.text}`}>
-                {rides.reduce((sum, ride) => sum + (ride.distance || 0), 0).toFixed(1)} km
+                {rides.reduce((sum, ride) => sum + (ride.distance_km || 0), 0).toFixed(1)} km
               </div>
               <div className={`text-sm ${themeClasses.textSecondary}`}>Total Distance</div>
             </div>
@@ -137,7 +148,7 @@ const Rides = () => {
             <div className={`bg-gradient-to-br ${themeClasses.card} backdrop-blur-sm rounded-xl p-4 border text-center`}>
               <div className="text-2xl text-purple-400 mb-2">⏱️</div>
               <div className={`text-2xl font-bold ${themeClasses.text}`}>
-                {formatDuration(rides.reduce((sum, ride) => sum + (ride.total_time || 0), 0))}
+                {formatDuration(rides.reduce((sum, ride) => sum + (ride.duration_minutes || 0), 0))}
               </div>
               <div className={`text-sm ${themeClasses.textSecondary}`}>Total Time</div>
             </div>
@@ -145,7 +156,7 @@ const Rides = () => {
             <div className={`bg-gradient-to-br ${themeClasses.card} backdrop-blur-sm rounded-xl p-4 border text-center`}>
               <div className="text-2xl text-yellow-400 mb-2">💰</div>
               <div className={`text-2xl font-bold ${themeClasses.text}`}>
-                ₹{rides.reduce((sum, ride) => sum + (ride.fare_collected || 0), 0).toFixed(2)}
+                ₹{rides.reduce((sum, ride) => sum + (ride.fare || ride.amount || 0), 0).toFixed(2)}
               </div>
               <div className={`text-sm ${themeClasses.textSecondary}`}>Total Spent</div>
             </div>
@@ -169,47 +180,41 @@ const Rides = () => {
                         {ride.status?.toUpperCase() || 'UNKNOWN'}
                       </div>
                       <div className={`${themeClasses.textSecondary} text-sm`}>
-                        {formatDate(ride.start_date)}
+                        {formatDate(ride.start_time)}
                       </div>
                     </div>
 
                     <h3 className={`text-lg font-semibold ${themeClasses.text} mb-1`}>
-                      Ride #{ride.ride_id?.split('_').pop() || 'N/A'}
+                      Ride #{ride.ride_id?.split('_')[1] || 'N/A'}
                     </h3>
 
                     <p className={`${themeClasses.textSecondary} text-sm`}>
-                      Vehicle: {ride.vehicle_id} • Station: {ride.pickup_station_id}
+                      Vehicle: {ride.vehicle_id} • Station: {ride.station_id}
                     </p>
                   </div>
 
                   {/* Ride Stats */}
                   <div className="flex gap-6 text-center">
-                    {ride.distance && (
-                      <div>
-                        <div className={`text-lg font-bold ${themeClasses.text}`}>
-                          {ride.distance} km
-                        </div>
-                        <div className={`text-xs ${themeClasses.textSecondary}`}>Distance</div>
+                    <div>
+                      <div className={`text-lg font-bold ${themeClasses.text}`}>
+                        {ride.distance_km ? `${ride.distance_km} km` : 'N/A'}
                       </div>
-                    )}
+                      <div className={`text-xs ${themeClasses.textSecondary}`}>Distance</div>
+                    </div>
 
-                    {ride.total_time && (
-                      <div>
-                        <div className={`text-lg font-bold ${themeClasses.text}`}>
-                          {formatDuration(ride.total_time)}
-                        </div>
-                        <div className={`text-xs ${themeClasses.textSecondary}`}>Duration</div>
+                    <div>
+                      <div className={`text-lg font-bold ${themeClasses.text}`}>
+                        {formatDuration(ride.duration_minutes)}
                       </div>
-                    )}
+                      <div className={`text-xs ${themeClasses.textSecondary}`}>Duration</div>
+                    </div>
 
-                    {ride.fare_collected && (
-                      <div>
-                        <div className="text-lg font-bold text-evgreen">
-                          ₹{ride.fare_collected.toFixed(2)}
-                        </div>
-                        <div className={`text-xs ${themeClasses.textSecondary}`}>Fare</div>
+                    <div>
+                      <div className="text-lg font-bold text-evgreen">
+                        ₹{(ride.fare || ride.amount || 0).toFixed(2)}
                       </div>
-                    )}
+                      <div className={`text-xs ${themeClasses.textSecondary}`}>Fare</div>
+                    </div>
                   </div>
 
                   {/* Expand Arrow */}
@@ -232,18 +237,18 @@ const Rides = () => {
                             <div>
                               <div className={`font-medium ${themeClasses.text}`}>Ride Started</div>
                               <div className={`text-sm ${themeClasses.textSecondary}`}>
-                                {formatDate(ride.start_date)}
+                                {formatDate(ride.start_time)}
                               </div>
                             </div>
                           </div>
 
-                          {ride.end_date && (
+                          {ride.end_time && (
                             <div className="flex items-center">
                               <div className="w-3 h-3 bg-red-400 rounded-full mr-3"></div>
                               <div>
                                 <div className={`font-medium ${themeClasses.text}`}>Ride Ended</div>
                                 <div className={`text-sm ${themeClasses.textSecondary}`}>
-                                  {formatDate(ride.end_date)}
+                                  {formatDate(ride.end_time)}
                                 </div>
                               </div>
                             </div>
@@ -257,7 +262,7 @@ const Rides = () => {
                         <div className="space-y-2">
                           <div className="flex justify-between">
                             <span className={themeClasses.textSecondary}>Pickup Station:</span>
-                            <span className={themeClasses.text}>{ride.pickup_station_id}</span>
+                            <span className={themeClasses.text}>{ride.station_id || 'N/A'}</span>
                           </div>
 
                           {ride.drop_station_id && (
@@ -272,12 +277,22 @@ const Rides = () => {
                             <span className={themeClasses.text}>{ride.vehicle_id}</span>
                           </div>
 
-                          {ride.fare_collected && (
-                            <div className="flex justify-between">
-                              <span className={themeClasses.textSecondary}>Amount Paid:</span>
-                              <span className="text-evgreen font-semibold">₹{ride.fare_collected.toFixed(2)}</span>
-                            </div>
-                          )}
+                          <div className="flex justify-between">
+                            <span className={themeClasses.textSecondary}>Vehicle Number:</span>
+                            <span className={themeClasses.text}>{ride.vehicle_number || 'N/A'}</span>
+                          </div>
+
+                          <div className="flex justify-between">
+                            <span className={themeClasses.textSecondary}>Payment Status:</span>
+                            <span className={`${ride.payment_status === 'paid' ? 'text-green-400' : ride.payment_status === 'pending' ? 'text-yellow-400' : 'text-red-400'}`}>
+                              {ride.payment_status?.toUpperCase() || 'N/A'}
+                            </span>
+                          </div>
+
+                          <div className="flex justify-between">
+                            <span className={themeClasses.textSecondary}>Amount Paid:</span>
+                            <span className="text-evgreen font-semibold">₹{(ride.fare || ride.amount || 0).toFixed(2)}</span>
+                          </div>
                         </div>
                       </div>
                     </div>
