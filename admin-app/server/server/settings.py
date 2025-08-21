@@ -37,8 +37,21 @@ INSTALLED_APPS = [
     'django.contrib.sessions',
     'django.contrib.messages',
     'django.contrib.staticfiles',
+<<<<<<< HEAD
     'corsheaders',
     'web'
+=======
+    'rest_framework',
+    'corsheaders',
+    'vehicles',
+    'rides',
+    'reports',
+    'payments',
+    'charging_ports',
+    'dashboard',
+    'settings',
+    'station_auth'
+>>>>>>> master
 ]
 
 MIDDLEWARE = [
@@ -50,6 +63,10 @@ MIDDLEWARE = [
     'django.contrib.messages.middleware.MessageMiddleware',
     'django.middleware.clickjacking.XFrameOptionsMiddleware',
     'corsheaders.middleware.CorsMiddleware',
+<<<<<<< HEAD
+=======
+    
+>>>>>>> master
 ]
 
 ROOT_URLCONF = 'server.urls'
