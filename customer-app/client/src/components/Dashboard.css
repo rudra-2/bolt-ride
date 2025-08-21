@@ -114,7 +114,7 @@
 }
 
 .active-session {
-  background: linear-gradient(135deg, #28a745, #20c997);
+  background: linear-gradient(135deg, #129d4c, #20c997);
   color: white;
   padding: 25px;
   border-radius: 15px;
@@ -197,7 +197,7 @@
 .balance-amount {
   font-size: 3rem;
   font-weight: bold;
-  color: #28a745;
+  color: #129d4c;
   margin: 20px 0;
 }
 
@@ -244,7 +244,7 @@
 .cost {
   font-size: 1.5rem;
   font-weight: bold;
-  color: #28a745;
+  color: #129d4c;
 }
 
 /* Button Styles */

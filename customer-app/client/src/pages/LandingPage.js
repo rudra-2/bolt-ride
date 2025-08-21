@@ -87,10 +87,10 @@ function BikeModel() {
       <group>
         {/* Energy rings around bike */}
         <Ring args={[3, 3.2, 32]} rotation={[Math.PI / 2, 0, 0]} position={[0, -1.2, 0]}>
-          <meshBasicMaterial color="#00FF94" transparent opacity={0.3} />
+          <meshBasicMaterial color="#129d4c" transparent opacity={0.3} />
         </Ring>
         <Ring args={[2.5, 2.7, 32]} rotation={[Math.PI / 2, 0, Math.PI / 4]} position={[0, -1.2, 0]}>
-          <meshBasicMaterial color="#00FF94" transparent opacity={0.2} />
+          <meshBasicMaterial color="#129d4c" transparent opacity={0.2} />
         </Ring>
 
         {/* Main bike model */}
@@ -107,7 +107,7 @@ function BikeModel() {
           scale={10}
           size={4}
           speed={0.8}
-          color="#00FF94"
+          color="#129d4c"
           opacity={0.7}
         />
         <Sparkles
@@ -219,7 +219,7 @@ function BikeModel() {
 
           {/* Right Content - 3D Bike */}
           <div className="flex-1 w-full h-[600px] relative">
-            <div className="absolute inset-0 bg-gradient-to-br from-evgreen/5 to-green-400/5 rounded-3xl backdrop-blur-sm border border-evgreen/10 shadow-2xl"></div>
+            {/* <div className="absolute inset-0 bg-gradient-to-br from-evgreen/5 to-green-400/5 rounded-3xl backdrop-blur-sm border border-evgreen/10 shadow-2xl"></div> */}
             <Canvas camera={{ position: [0, 3, 12], fov: 35 }}>
               <ambientLight intensity={1.8} />
               <directionalLight
@@ -229,7 +229,7 @@ function BikeModel() {
                 shadow-mapSize-width={2048}
                 shadow-mapSize-height={2048}
               />
-              <pointLight position={[-5, -5, -5]} intensity={0.8} color="#00FF94" />
+              <pointLight position={[-5, -5, -5]} intensity={0.8} color="#129d4c" />
               <pointLight position={[5, -5, 5]} intensity={0.5} color="#ffffff" />
               <ScrollControls pages={3} damping={0.25}>
                 <BikeModel />
@@ -237,25 +237,34 @@ function BikeModel() {
             </Canvas>
 
             {/* Floating UI Elements */}
-            <div className="absolute top-4 right-4 bg-white/90 backdrop-blur-sm px-4 py-2 rounded-full border border-evgreen/20 animate-bounce shadow-lg" style={{ animationDelay: '2s' }}>
+            {/* <div className="absolute top-4 right-4 bg-white/90 backdrop-blur-sm px-4 py-2 rounded-full border border-evgreen/20 animate-bounce shadow-lg" style={{ animationDelay: '2s' }}>
               <span className="text-sm font-medium text-gray-700">🚴 Scroll to explore</span>
+            </div> */}
+            <div className="group absolute top-4 right-4">
+              <div className="absolute -inset-0.5 bg-gradient-to-r from-green-400 to-evgreen rounded-full blur opacity-50 group-hover:opacity-100 transition duration-1000 group-hover:duration-300 animate-pulse"></div>
+              <div className="relative flex items-center gap-2 bg-white/80 dark:bg-gray-900/80 backdrop-blur-md text-gray-700 dark:text-gray-300 px-4 py-2 rounded-full border border-transparent group-hover:border-evgreen/30 transition-all duration-300 shadow-lg">
+                {/* <svg xmlns="http://www.w3.org/2000/svg" fill="none" viewBox="0 0 24 24" strokeWidth={1.5} stroke="currentColor" className="w-5 h-5 text-evgreen animate-pulse">
+      <path strokeLinecap="round" strokeLinejoin="round" d="M19.5 13.5 12 21m0 0-7.5-7.5M12 21V3" />
+    </svg> */}
+                <span className="text-sm font-medium">🚴 Scroll to explore</span>
+              </div>
             </div>
 
             <div className="absolute bottom-4 left-4 bg-evgreen text-white px-4 py-2 rounded-full animate-pulse shadow-lg">
               <span className="text-sm font-medium">⚡ 100% Electric</span>
             </div>
 
-            <div className="absolute top-1/2 -left-4 bg-white/90 backdrop-blur-sm px-3 py-2 rounded-full border border-evgreen/20 animate-pulse shadow-lg" style={{ animationDelay: '1.5s' }}>
+            {/* <div className="absolute top-1/2 -left-4 bg-white/90 backdrop-blur-sm px-3 py-2 rounded-full border border-evgreen/20 animate-pulse shadow-lg" style={{ animationDelay: '1.5s' }}>
               <span className="text-xs font-medium text-evgreen">🌱 Eco-Friendly</span>
-            </div>
+            </div> */}
           </div>
         </div>
 
         {/* Scroll Indicator */}
         <div className="absolute bottom-8 left-1/2 transform -translate-x-1/2 animate-bounce" style={{ animationDelay: '3s' }}>
-          <div className="w-6 h-10 border-2 border-evgreen rounded-full flex justify-center bg-white/50 backdrop-blur-sm shadow-lg">
+          {/* <div className="w-6 h-10 border-2 border-evgreen rounded-full flex justify-center bg-white/50 backdrop-blur-sm shadow-lg">
             <div className="w-1 h-3 bg-evgreen rounded-full mt-2 animate-ping"></div>
-          </div>
+          </div> */}
         </div>
       </div>
 
@@ -420,7 +429,7 @@ function BikeModel() {
 
           {/* CTA Section */}
           <div className="text-center mt-16">
-            <div className="bg-gradient-to-r from-evgreen to-green-400 rounded-3xl p-8 text-white shadow-2xl">
+            <div className="bg-gradient-to-r from-evgreen to-green-500 rounded-3xl p-8 text-white shadow-2xl">
               <h3 className="text-3xl font-bold mb-4">Ready to Get Started?</h3>
               <p className="text-xl mb-8 opacity-90">Join thousands of riders making cities cleaner, one ride at a time</p>
               <div className="flex flex-col sm:flex-row gap-4 justify-center">
