@@ -438,19 +438,19 @@ const Stations = () => {
 
             {/* Quick Location Buttons for Ahmedabad Areas */}
             <div className="mb-6">
-              <p className={`${themeClasses.textSecondary} text-sm mb-4 font-medium`}>Quick Select - Ahmedabad Districts:</p>
+              <p className={`${themeClasses.textSecondary} text-sm mb-4 font-medium`}>Quick Select - Available Stations:</p>
               <div className="grid grid-cols-2 sm:grid-cols-3 md:grid-cols-5 gap-3">
-                {predefinedLocations.map((location) => (
+                {stations.map((station) => (
                   <button
-                    key={location.name}
-                    onClick={() => handlePredefinedLocation(location)}
+                    key={station.station_id}
+                    onClick={() => handlePredefinedLocation({ name: station.station_name, lat: station.coordinates?.latitude || station.location?.coordinates?.[1], lng: station.coordinates?.longitude || station.location?.coordinates?.[0] })}
                     className="group bg-evgreen/10 hover:bg-evgreen hover:text-black text-evgreen px-4 py-3 rounded-xl text-sm font-semibold transition-all duration-300 hover:scale-105 hover:shadow-lg border border-evgreen/20 hover:border-evgreen"
                   >
                     <div className="flex items-center justify-center">
                       <svg className="w-3 h-3 mr-2 opacity-70 group-hover:opacity-100" fill="currentColor" viewBox="0 0 20 20">
                         <path fillRule="evenodd" d="M5.05 4.05a7 7 0 119.9 9.9L10 18.9l-4.95-4.95a7 7 0 010-9.9zM10 11a2 2 0 100-4 2 2 0 000 4z" clipRule="evenodd" />
                       </svg>
-                      {location.name}
+                      {station.station_name}
                     </div>
                   </button>
                 ))}
@@ -647,7 +647,7 @@ const Stations = () => {
                       {station.station_name}
                     </h3>
                     <p className={`${themeClasses.textSecondary} text-sm`}>
-                      📍 {station.station_area}
+                      {station.station_area}
                     </p>
                   </div>
 
@@ -663,15 +663,29 @@ const Stations = () => {
                 {/* Station Stats */}
                 <div className="grid grid-cols-2 gap-4 mb-4">
                   <div className={`${themeClasses.button} rounded-lg p-3 text-center border ${isDarkMode ? 'border-gray-600' : 'border-gray-200'}`}>
-                    <div className="text-2xl text-evgreen mb-1">🚲</div>
-                    <div className={`text-sm ${themeClasses.textSecondary}`}>Capacity</div>
-                    <div className={`font-bold ${themeClasses.text}`}>{station.capacity}</div>
+                    <div className="mb-2 flex justify-center">
+                      {/* Capacity Icon: Bike Handlebar */}
+                      <svg className="inline w-12 h-12" viewBox="0 0 48 48" fill="none" xmlns="http://www.w3.org/2000/svg">
+                        <rect x="10" y="22" width="28" height="4" rx="2" fill="#22c55e"/>
+                        <rect x="12" y="18" width="4" height="8" rx="2" fill="#22c55e"/>
+                        <rect x="32" y="18" width="4" height="8" rx="2" fill="#22c55e"/>
+                        <circle cx="14" cy="24" r="2" fill="#22c55e"/>
+                        <circle cx="34" cy="24" r="2" fill="#22c55e"/>
+                      </svg>
+                    </div>
+                    <div className={`text-base font-semibold ${themeClasses.textSecondary}`}>Capacity</div>
+                    <div className={`font-bold text-xl ${themeClasses.text}`}>{station.capacity}</div>
                   </div>
 
                   <div className={`${themeClasses.button} rounded-lg p-3 text-center border ${isDarkMode ? 'border-gray-600' : 'border-gray-200'}`}>
-                    <div className="text-2xl text-blue-400 mb-1">⚡</div>
-                    <div className={`text-sm ${themeClasses.textSecondary}`}>Charging</div>
-                    <div className={`font-bold ${themeClasses.text}`}>{station.charging_ports}</div>
+                    <div className="mb-2 flex justify-center">
+                      {/* Charging Icon: Thunderbolt */}
+                      <svg className="inline w-12 h-12" viewBox="0 0 48 48" fill="none" xmlns="http://www.w3.org/2000/svg">
+                        <polygon points="26,6 14,28 24,28 22,42 36,18 26,18" fill="#3b82f6"/>
+                      </svg>
+                    </div>
+                    <div className={`text-base font-semibold ${themeClasses.textSecondary}`}>Charging</div>
+                    <div className={`font-bold text-xl ${themeClasses.text}`}>{station.charging_ports}</div>
                   </div>
                 </div>
 
@@ -681,6 +695,9 @@ const Stations = () => {
                     <div className={`flex items-center justify-between ${themeClasses.textSecondary} text-sm`}>
                       <div className="flex items-center">
                         <span className="mr-2 animate-pulse">�</span>
+                        <span className="mr-2 animate-pulse">
+                          <svg className="inline w-4 h-4" fill="none" viewBox="0 0 24 24" stroke="currentColor"><circle cx="12" cy="12" r="10" stroke="#22c55e" strokeWidth="2" fill="#fff"/></svg>
+                        </span>
                         <span className="font-medium transition-all duration-300">
                           {station.distance < 0.1
                             ? `${Math.round(station.distance * 10000) / 10}m`
@@ -695,6 +712,9 @@ const Stations = () => {
                       </div>
                       <div className="flex items-center text-xs">
                         <span className="mr-1">⏱️</span>
+                        <span className="mr-1">
+                          <svg className="inline w-4 h-4" fill="none" viewBox="0 0 24 24" stroke="currentColor"><rect x="8" y="12" width="8" height="4" rx="2" fill="#3b82f6"/><rect x="12" y="14" width="4" height="2" rx="1" fill="#fff"/></svg>
+                        </span>
                         <span className="transition-all duration-300">
                           ~{Math.round(station.distance * 12)} min walk
                         </span>
@@ -724,8 +744,8 @@ const Stations = () => {
                     <div className="mt-1 flex justify-between text-xs opacity-75">
                       <span>
                         {station.distance < 0.5 ? "🟢 Very Close" :
-                          station.distance < 1 ? "🟡 Close" :
-                            station.distance < 2 ? "🟠 Moderate" : "🔴 Far"}
+                          station.distance < 1 ? "Close" :
+                            station.distance < 2 ? "Moderate" : "Far"}
                       </span>
                       <span>Updated • Live</span>
                     </div>
@@ -736,7 +756,7 @@ const Stations = () => {
                 {(!userLocation || station.distance === undefined) && station.distance && (
                   <div className="mb-4">
                     <div className={`flex items-center ${themeClasses.textSecondary} text-sm`}>
-                      <span className="mr-2">🚶‍♂️</span>
+                      <svg className="inline w-4 h-4 mr-2" fill="none" viewBox="0 0 24 24" stroke="currentColor"><rect x="8" y="12" width="8" height="4" rx="2" fill="#3b82f6"/><rect x="12" y="14" width="4" height="2" rx="1" fill="#fff"/></svg>
                       {station.distance.toFixed(2)} km away
                     </div>
                   </div>
@@ -778,14 +798,14 @@ const Stations = () => {
                     }}
                     title="Get Directions"
                   >
-                    🗺️
+                    <svg className="inline w-4 h-4" fill="none" viewBox="0 0 24 24" stroke="currentColor"><rect x="2" y="6" width="20" height="12" rx="6" fill="#3b82f6"/><rect x="10" y="12" width="4" height="2" rx="1" fill="#fff"/></svg>
                   </button>
 
                   <button
                     className={`${themeClasses.button} p-2 rounded-lg border ${isDarkMode ? 'border-gray-600' : 'border-gray-200'} hover:scale-110 transition-all duration-300`}
                     title="View Details"
                   >
-                    📍
+                    <svg className="inline w-4 h-4" fill="none" viewBox="0 0 24 24" stroke="#22c55e" strokeWidth="2"><circle cx="12" cy="12" r="10" fill="#fff"/></svg>
                   </button>
                 </div>
               </div>
@@ -796,7 +816,7 @@ const Stations = () => {
         {/* No Stations Message */}
         {stations.length === 0 && !loading && (
           <div className="text-center py-12">
-            <div className="text-6xl mb-4">🚲</div>
+           
             <h3 className={`text-2xl font-bold ${themeClasses.text} mb-2`}>No Stations Found</h3>
             <p className={themeClasses.textSecondary}>
               {userLocation

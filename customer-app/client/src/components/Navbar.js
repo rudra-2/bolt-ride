@@ -7,25 +7,26 @@ export default function Navbar() {
   const [isDark, setIsDark] = useState(false);
 
   useEffect(() => {
-    const savedTheme = localStorage.getItem("theme");
-    if (savedTheme === "dark") {
-      setIsDark(true);
-      document.documentElement.classList.add("dark");
-    } else {
-      setIsDark(false);
-      document.documentElement.classList.remove("dark");
-    }
+    const updateTheme = () => {
+      const savedTheme = localStorage.getItem("theme");
+      const isDarkNow = savedTheme === "dark" || document.documentElement.classList.contains("dark");
+      setIsDark(isDarkNow);
+    };
+    updateTheme();
+    window.addEventListener("storage", updateTheme);
+    return () => window.removeEventListener("storage", updateTheme);
   }, []);
 
   const toggleTheme = () => {
-    const newTheme = !isDark;
-    setIsDark(newTheme);
-    if (newTheme) {
-      document.documentElement.classList.add("dark");
-      localStorage.setItem("theme", "dark");
-    } else {
+    const isCurrentlyDark = document.documentElement.classList.contains("dark") || localStorage.getItem("theme") === "dark";
+    if (isCurrentlyDark) {
       document.documentElement.classList.remove("dark");
       localStorage.setItem("theme", "light");
+      setIsDark(false);
+    } else {
+      document.documentElement.classList.add("dark");
+      localStorage.setItem("theme", "dark");
+      setIsDark(true);
     }
   };
 
@@ -41,7 +42,7 @@ export default function Navbar() {
         <div className="flex justify-between items-center h-16">
           {/* Logo */}
           <Link to="/" className="text-2xl font-bold bg-gradient-to-r from-evgreen to-green-300 bg-clip-text text-transparent hover:scale-105 transition-transform duration-300">
-            BoltRide ⚡
+            BoltRide
           </Link>
 
           {/* Desktop Navigation */}

@@ -3,7 +3,7 @@ import { useLocation, useNavigate } from "react-router-dom";
 import { MapContainer, TileLayer, Marker, Polyline, Circle, Popup, Polygon } from "react-leaflet";
 import "leaflet/dist/leaflet.css";
 import L from "leaflet";
-import { stationsAPI, ridesAPI, walletAPI } from "../api";
+import { stationsAPI, ridesAPI, walletAPI, passesAPI } from "../api";
 import Navbar from "../components/Navbar";
 
 const ActiveRide = () => {
@@ -22,12 +22,19 @@ const ActiveRide = () => {
   const [rideStartTime] = useState(new Date());
   const [showEmergencyContact, setShowEmergencyContact] = useState(false);
   const [walletBalance, setWalletBalance] = useState(0);
+  const [userPasses, setUserPasses] = useState([]);
 
-  // Ahmedabad City Boundary Coordinates (same as Dashboard)
   const ahmedabadBoundary = [
-    [23.1685, 72.4285], [23.1685, 72.7714], [23.0950, 72.7714], [22.9876, 72.7285],
-    [22.9500, 72.6428], [22.9750, 72.5571], [23.0100, 72.4571], [23.0800, 72.4142],
-    [23.1400, 72.4000], [23.1685, 72.4285]
+    [23.13594, 72.50839],
+    [23.26216,72.64022],
+    [23.24260,72.67730],
+    [23.15866,72.70271],
+    [23.10689,72.69721],
+    [22.93626,72.65121],
+    [22.91982,72.53997],
+    [22.93120,72.48229],
+    [22.98462,72.44796],
+    [23.13594, 72.50839] 
   ];
 
   const isWithinCityBoundary = (lat, lng) => {
@@ -81,17 +88,24 @@ const ActiveRide = () => {
             // Update current location
             setCurrentLocation(newLocation);
             
-            // Add to ride path
-            setRidePath(prev => [...prev, [newLocation.lat, newLocation.lng]]);
-            
-            // Calculate total distance
-            if (ridePath.length > 0) {
+            // Add to ride path (only if moved significantly - at least 10 meters)
+            if (ridePath.length === 0) {
+              // First location point
+              setRidePath([[newLocation.lat, newLocation.lng]]);
+            } else {
               const lastPoint = ridePath[ridePath.length - 1];
-              const segmentDistance = calculateDistance(
+              const distanceFromLast = calculateDistance(
                 lastPoint[0], lastPoint[1],
                 newLocation.lat, newLocation.lng
               );
-              setTotalDistance(prev => prev + segmentDistance);
+              
+              // Only add point if moved at least 10 meters to avoid GPS noise
+              if (distanceFromLast >= 0.01) { // 0.01 km = 10 meters
+                setRidePath(prev => [...prev, [newLocation.lat, newLocation.lng]]);
+                
+                // Update total distance
+                setTotalDistance(prev => prev + distanceFromLast);
+              }
             }
           },
           (error) => console.error('Location error:', error),
@@ -111,14 +125,18 @@ const ActiveRide = () => {
       const baseFare = 5;
       const distanceFare = totalDistance * 2;
       const timeFare = minutes * 1;
-      const fare = baseFare + distanceFare + timeFare;
-      setCurrentFare(Math.max(fare, 5)); // Minimum ₹5
+      const calculatedFare = baseFare + distanceFare + timeFare;
+      const fare = Math.max(calculatedFare, 5); // Minimum ₹5
       
-      // Check if wallet balance is sufficient
-      if (walletBalance < fare && fare > 5) {
+      // If user has valid pass, show ₹0, otherwise show calculated fare
+      const validPass = checkValidPass();
+      setCurrentFare(validPass ? 0 : fare);
+      
+      // Check if wallet balance is sufficient (only if no valid pass)
+      if (!validPass && walletBalance < fare && fare > 5) {
         setError(`Insufficient wallet balance! Current fare: ₹${fare.toFixed(2)}, Wallet: ₹${walletBalance.toFixed(2)}`);
       } else if (error.includes('Insufficient wallet balance')) {
-        setError(''); // Clear error if balance is now sufficient
+        setError(''); // Clear error if balance is now sufficient or user has pass
       }
     }, 1000);
 
@@ -128,11 +146,14 @@ const ActiveRide = () => {
     // Fetch wallet balance
     fetchWalletBalance();
 
+    // Fetch user passes
+    fetchUserPasses();
+
     return () => {
       clearInterval(locationInterval);
       clearInterval(timeInterval);
     };
-  }, [rideId, vehicleDetails, navigate, rideStartTime, totalDistance, ridePath]);
+  }, [rideId, vehicleDetails, navigate, rideStartTime, totalDistance, ridePath, walletBalance, userPasses]);
 
   const fetchNearbyStations = async () => {
     if (!currentLocation) return;
@@ -154,6 +175,38 @@ const ActiveRide = () => {
     }
   };
 
+  const fetchUserPasses = async () => {
+    try {
+      const response = await passesAPI.getCurrent();
+      // Ensure userPasses is always an array
+      let passes = [];
+      if (Array.isArray(response.data.passes)) {
+        passes = response.data.passes;
+      } else if (Array.isArray(response.data)) {
+        passes = response.data;
+      } else if (response.data && typeof response.data === 'object') {
+        passes = Object.values(response.data);
+      }
+      setUserPasses(passes);
+    } catch (err) {
+      console.error('Error fetching user passes:', err);
+      setUserPasses([]);
+    }
+  };
+
+  // Check if user has a valid pass
+  const checkValidPass = () => {
+    if (!Array.isArray(userPasses)) return null;
+    const now = new Date();
+    return userPasses.find(pass => {
+      if (!pass) return false;
+      if (pass.status !== 'active') return false;
+      if (!pass.expiry_date && !pass.expires_at) return true; // If no expiry, treat as valid
+      const expiryDate = new Date(pass.expiry_date || pass.expires_at);
+      return expiryDate > now;
+    }) || null;
+  };
+
   const handleEndRide = async (endStation) => {
     if (!checkGeofence(
       endStation.coordinates?.latitude || endStation.location?.coordinates?.[1] || 0,
@@ -165,6 +218,9 @@ const ActiveRide = () => {
 
     setLoading(true);
     try {
+      // Check if user has a valid pass
+      const validPass = checkValidPass();
+      
       const endRideData = {
         ride_id: rideId,
         drop_station_id: endStation.station_id, // Use drop_station_id as per backend model
@@ -173,7 +229,9 @@ const ActiveRide = () => {
           longitude: currentLocation.lng
         },
         distance: totalDistance, // Use 'distance' as per backend
-        total_time: Math.floor(rideTime / 60) // Convert seconds to minutes as per backend
+        total_time: Math.floor(rideTime / 60), // Convert seconds to minutes as per backend
+        has_valid_pass: !!validPass, // Send pass status to backend
+        pass_id: validPass?.pass_id || validPass?.id // Send pass ID if available
       };
 
       console.log('Ending ride with data:', endRideData);
@@ -181,10 +239,18 @@ const ActiveRide = () => {
       const response = await ridesAPI.end(endRideData);
       console.log('End ride response:', response.data);
 
+      // Determine the message based on whether a pass was used
+      let successMessage;
+      if (validPass) {
+        successMessage = `Ride completed using ${validPass.pass_type || 'ride'} pass! No charges applied.`;
+      } else {
+        successMessage = `Ride completed! Total fare: ₹${response.data.ride?.fare || currentFare.toFixed(2)}`;
+      }
+
       // Navigate back to dashboard with success message
       navigate('/dashboard', {
         state: {
-          message: `Ride completed! Total fare: ₹${response.data.ride?.fare || currentFare.toFixed(2)}`
+          message: successMessage
         }
       });
     } catch (err) {
@@ -237,6 +303,12 @@ const ActiveRide = () => {
             <div className="text-2xl font-bold text-evgreen">₹{currentFare.toFixed(2)}</div>
             <div className="text-sm text-gray-400">Current Fare</div>
             <div className="text-sm text-blue-400 mt-1">Wallet: ₹{walletBalance.toFixed(2)}</div>
+            {checkValidPass() && (
+              <div className="text-sm text-green-400 mt-1 flex items-center">
+                <span className="mr-1">🎫</span>
+                Active Pass - No charges!
+              </div>
+            )}
           </div>
         </div>
 
@@ -264,13 +336,29 @@ const ActiveRide = () => {
             <div className="text-gray-400">Avg Speed</div>
           </div>
           <div className="bg-gray-800/80 rounded-xl p-6 text-center border border-gray-700/50">
-            <button
-              onClick={() => setShowEmergencyContact(true)}
-              className="w-full bg-red-600 hover:bg-red-700 text-white py-2 px-4 rounded-lg font-semibold transition-colors"
-            >
-              🚨 Emergency
-            </button>
-            <div className="text-gray-400 text-sm mt-1">Contact Help</div>
+            {checkValidPass() ? (
+              <div>
+                <div className="text-2xl font-bold text-green-400 mb-1">FREE</div>
+                <div className="text-green-400 text-sm">Pass Active</div>
+                <div className="text-xs text-gray-400 mt-1">{checkValidPass().pass_type || 'Ride Pass'}</div>
+                <button
+                  onClick={() => setShowEmergencyContact(true)}
+                  className="w-full bg-red-600 hover:bg-red-700 text-white py-1 px-2 rounded-lg font-semibold transition-colors text-xs mt-2"
+                >
+                  Emergency
+                </button>
+              </div>
+            ) : (
+              <div>
+                <button
+                  onClick={() => setShowEmergencyContact(true)}
+                  className="w-full bg-red-600 hover:bg-red-700 text-white py-2 px-4 rounded-lg font-semibold transition-colors"
+                >
+                  Emergency
+                </button>
+                <div className="text-gray-400 text-sm mt-1">Contact Help</div>
+              </div>
+            )}
           </div>
         </div>
 
@@ -279,15 +367,18 @@ const ActiveRide = () => {
           <div className="fixed inset-0 bg-black/50 flex items-center justify-center z-50 p-4">
             <div className="bg-gray-800 rounded-2xl p-6 max-w-md w-full border border-gray-700">
               <h3 className="text-xl font-bold text-red-400 mb-4">🚨 Emergency Contact</h3>
+              <h3 className="text-xl font-bold text-red-400 mb-4">Emergency Contact</h3>
               <div className="space-y-4">
                 <div className="bg-gray-700/50 rounded-lg p-4">
                   <h4 className="font-semibold text-evgreen mb-2">Customer Support</h4>
                   <p className="text-white text-lg font-bold">📞 +91 9876543210</p>
+                  <p className="text-white text-lg font-bold">+91 9876543210</p>
                   <p className="text-gray-400 text-sm">24/7 Support Available</p>
                 </div>
                 <div className="bg-gray-700/50 rounded-lg p-4">
                   <h4 className="font-semibold text-orange-400 mb-2">Police Emergency</h4>
                   <p className="text-white text-lg font-bold">📞 100</p>
+                  <p className="text-white text-lg font-bold">100</p>
                   <p className="text-gray-400 text-sm">For serious emergencies</p>
                 </div>
                 <div className="bg-gray-700/50 rounded-lg p-4">
@@ -321,9 +412,26 @@ const ActiveRide = () => {
         <div className="grid grid-cols-1 lg:grid-cols-3 gap-6">
           <div className="lg:col-span-2">
             <div className="bg-gray-800/80 rounded-2xl p-6 border border-gray-700/50">
-              <h2 className="text-xl font-bold mb-4">Live Tracking</h2>
-              <div className="h-80 rounded-xl overflow-hidden border-2 border-evgreen">
-                {currentLocation ? (
+              <div className="flex justify-between items-center mb-4">
+                <h2 className="text-xl font-bold">Live Tracking</h2>
+                <div className="flex items-center gap-4 text-sm">
+                  <div className="flex items-center gap-2">
+                    <div className="w-3 h-3 bg-evgreen rounded-full"></div>
+                    <span className="text-gray-300">Your Path</span>
+                  </div>
+                  <div className="flex items-center gap-2">
+                    <div className="w-3 h-3 bg-blue-400 rounded-full"></div>
+                    <span className="text-gray-300">End Stations</span>
+                  </div>
+                  {!isWithinCityBoundary(currentLocation?.lat || 0, currentLocation?.lng || 0) && (
+                    <div className="flex items-center gap-2">
+                      <div className="w-3 h-3 bg-red-500 rounded-full animate-pulse"></div>
+                      <span className="text-red-400 text-xs">Outside Service Area</span>
+                    </div>
+                  )}
+                </div>
+              </div>
+              <div className="h-80 rounded-xl overflow-hidden border-2 border-evgreen">{currentLocation ? (
                   <MapContainer
                     center={[currentLocation.lat, currentLocation.lng]}
                     zoom={15}
@@ -335,7 +443,7 @@ const ActiveRide = () => {
                       url="https://{s}.tile.openstreetmap.org/{z}/{x}/{y}.png"
                     />
                     
-                    {/* Ahmedabad City Boundary */}
+                    {/* Ahmedabad City Boundary Polygon */}
                     <Polygon 
                       positions={ahmedabadBoundary} 
                       color="#22c55e" 
@@ -343,31 +451,51 @@ const ActiveRide = () => {
                       fillColor="#22c55e" 
                       fillOpacity={0.05}
                       dashArray="5, 10"
-                    />
+                    >
+                      <Popup>
+                        <div>
+                          <strong>Ahmedabad Service Area</strong><br />
+                          <span style={{color: '#22c55e'}}>Service available within this boundary</span>
+                        </div>
+                      </Popup>
+                    </Polygon>
                     
-                    {/* Current Location */}
+                    {/* Current Location with accuracy circle */}
                     <Marker 
                       position={[currentLocation.lat, currentLocation.lng]} 
                       icon={L.icon({ 
                         iconUrl: "data:image/svg+xml;base64," + btoa(`
-                          <svg xmlns="http://www.w3.org/2000/svg" viewBox="0 0 24 24" width="32" height="32">
-                            <circle cx="12" cy="12" r="10" fill="#22c55e" stroke="#ffffff" stroke-width="3"/>
-                            <circle cx="12" cy="12" r="4" fill="#ffffff"/>
+                          <svg xmlns="http://www.w3.org/2000/svg" viewBox="0 0 36 36" width="36" height="36">
+                            <circle cx="18" cy="18" r="16" fill="#22c55e" stroke="#ffffff" stroke-width="3"/>
+                            <circle cx="18" cy="18" r="6" fill="#ffffff"/>
+                            <text x="18" y="32" text-anchor="middle" fill="#22c55e" font-size="8" font-weight="bold">YOU</text>
                           </svg>
                         `),
-                        iconSize: [32, 32] 
+                        iconSize: [36, 36] 
                       })}
                     >
                       <Popup>
                         <div>
                           <strong>Your Current Location</strong><br />
                           {isWithinCityBoundary(currentLocation.lat, currentLocation.lng) ? 
-                            <span className="text-green-600">Within Ahmedabad</span> : 
-                            <span className="text-red-600">Outside City Limits</span>
-                          }
+                            <span style={{color: '#22c55e'}}>✓ Within Ahmedabad Service Area</span> : 
+                            <span style={{color: '#ef4444'}}>⚠️ Outside City Limits</span>
+                          }<br />
+                          <small>Distance: {totalDistance.toFixed(2)} km</small><br />
+                          <small>Time: {formatTime(rideTime)}</small>
                         </div>
                       </Popup>
                     </Marker>
+                    
+                    {/* Accuracy circle for current location */}
+                    <Circle
+                      center={[currentLocation.lat, currentLocation.lng]}
+                      radius={Math.min(currentLocation.accuracy || 50, 100)} // Cap accuracy radius at 100m
+                      color="#22c55e"
+                      weight={1}
+                      fillOpacity={0.1}
+                      dashArray="2, 4"
+                    />
                     
                     {/* Start Station */}
                     <Marker 
@@ -433,14 +561,69 @@ const ActiveRide = () => {
                       );
                     })}
                     
-                    {/* Ride Path */}
+                    {/* Ride Path with enhanced visualization */}
                     {ridePath.length > 1 && (
-                      <Polyline
-                        positions={ridePath}
-                        color="#22c55e"
-                        weight={4}
-                        opacity={0.8}
-                      />
+                      <>
+                        {/* Main path line */}
+                        <Polyline
+                          positions={ridePath}
+                          color="#22c55e"
+                          weight={4}
+                          opacity={0.8}
+                        />
+                        
+                        {/* Path shadow for better visibility */}
+                        <Polyline
+                          positions={ridePath}
+                          color="#000000"
+                          weight={6}
+                          opacity={0.3}
+                        />
+                        
+                        {/* Waypoint markers every 10th point */}
+                        {ridePath.map((point, index) => {
+                          if (index > 0 && index < ridePath.length - 1 && index % 10 === 0) {
+                            return (
+                              <Marker
+                                key={`waypoint-${index}`}
+                                position={point}
+                                icon={L.icon({
+                                  iconUrl: "data:image/svg+xml;base64," + btoa(`
+                                    <svg xmlns="http://www.w3.org/2000/svg" viewBox="0 0 12 12" width="12" height="12">
+                                      <circle cx="6" cy="6" r="4" fill="#22c55e" stroke="#ffffff" stroke-width="1"/>
+                                    </svg>
+                                  `),
+                                  iconSize: [12, 12]
+                                })}
+                              />
+                            );
+                          }
+                          return null;
+                        })}
+                      </>
+                    )}
+                    
+                    {/* Start point marker */}
+                    {ridePath.length > 0 && (
+                      <Marker
+                        position={ridePath[0]}
+                        icon={L.icon({
+                          iconUrl: "data:image/svg+xml;base64," + btoa(`
+                            <svg xmlns="http://www.w3.org/2000/svg" viewBox="0 0 24 24" width="24" height="24">
+                              <circle cx="12" cy="12" r="10" fill="#10b981" stroke="#ffffff" stroke-width="2"/>
+                              <text x="12" y="16" text-anchor="middle" fill="white" font-size="10" font-weight="bold">START</text>
+                            </svg>
+                          `),
+                          iconSize: [24, 24]
+                        })}
+                      >
+                        <Popup>
+                          <div>
+                            <strong>Ride Started Here</strong><br />
+                            Distance: 0.0 km
+                          </div>
+                        </Popup>
+                      </Marker>
                     )}
                   </MapContainer>
                 ) : (

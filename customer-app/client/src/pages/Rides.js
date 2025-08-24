@@ -107,7 +107,7 @@ const Rides = () => {
         <div className="flex justify-between items-center mb-8">
           <div>
             <h1 className="text-4xl font-bold bg-gradient-to-r from-evgreen to-green-300 bg-clip-text text-transparent mb-2">
-              Ride History 📊
+              Ride History
             </h1>
             <p className={themeClasses.textSecondary}>Track your eco-friendly journeys</p>
           </div>
@@ -117,7 +117,7 @@ const Rides = () => {
             onClick={() => setIsDarkMode(!isDarkMode)}
             className={`${themeClasses.button} p-3 rounded-full border ${isDarkMode ? 'border-gray-600' : 'border-gray-300'} transition-all duration-300 hover:scale-110`}
           >
-            {isDarkMode ? '🌙' : '☀️'}
+            {isDarkMode ? 'Dark Mode' : 'Light Mode'}
           </button>
         </div>
 
@@ -132,13 +132,25 @@ const Rides = () => {
         {rides.length > 0 && (
           <div className="grid grid-cols-1 md:grid-cols-4 gap-4 mb-8">
             <div className={`bg-gradient-to-br ${themeClasses.card} backdrop-blur-sm rounded-xl p-4 border text-center`}>
-              <div className="text-2xl text-evgreen mb-2">🚴‍♂️</div>
+                <div className="mb-2 flex justify-center">
+                  <svg width="32" height="32" viewBox="0 0 32 32" fill="none">
+                    <circle cx="16" cy="16" r="14" stroke="#22c55e" strokeWidth="3" fill="#fff"/>
+                    <rect x="10" y="14" width="12" height="4" rx="2" fill="#22c55e"/>
+                    <rect x="14" y="10" width="4" height="12" rx="2" fill="#22c55e"/>
+                  </svg>
+                </div>
               <div className={`text-2xl font-bold ${themeClasses.text}`}>{rides.length}</div>
               <div className={`text-sm ${themeClasses.textSecondary}`}>Total Rides</div>
             </div>
 
             <div className={`bg-gradient-to-br ${themeClasses.card} backdrop-blur-sm rounded-xl p-4 border text-center`}>
-              <div className="text-2xl text-blue-400 mb-2">📏</div>
+                <div className="mb-2 flex justify-center">
+                  <svg width="32" height="32" viewBox="0 0 32 32" fill="none">
+                    <rect x="6" y="14" width="20" height="4" rx="2" fill="#3b82f6"/>
+                    <circle cx="8" cy="16" r="2" fill="#3b82f6"/>
+                    <circle cx="24" cy="16" r="2" fill="#3b82f6"/>
+                  </svg>
+                </div>
               <div className={`text-2xl font-bold ${themeClasses.text}`}>
                 {rides.reduce((sum, ride) => sum + (ride.distance_km || 0), 0).toFixed(1)} km
               </div>
@@ -146,7 +158,12 @@ const Rides = () => {
             </div>
 
             <div className={`bg-gradient-to-br ${themeClasses.card} backdrop-blur-sm rounded-xl p-4 border text-center`}>
-              <div className="text-2xl text-purple-400 mb-2">⏱️</div>
+                <div className="mb-2 flex justify-center">
+                  <svg width="32" height="32" viewBox="0 0 32 32" fill="none">
+                    <circle cx="16" cy="16" r="14" stroke="#a78bfa" strokeWidth="3" fill="#fff"/>
+                    <path d="M16 10v6l4 2" stroke="#a78bfa" strokeWidth="2" strokeLinecap="round"/>
+                  </svg>
+                </div>
               <div className={`text-2xl font-bold ${themeClasses.text}`}>
                 {formatDuration(rides.reduce((sum, ride) => sum + (ride.duration_minutes || 0), 0))}
               </div>
@@ -154,7 +171,13 @@ const Rides = () => {
             </div>
 
             <div className={`bg-gradient-to-br ${themeClasses.card} backdrop-blur-sm rounded-xl p-4 border text-center`}>
-              <div className="text-2xl text-yellow-400 mb-2">💰</div>
+                <div className="mb-2 flex justify-center">
+                  <svg width="32" height="32" viewBox="0 0 32 32" fill="none">
+                    <rect x="8" y="12" width="16" height="8" rx="4" fill="#facc15"/>
+                    <circle cx="16" cy="16" r="4" fill="#fff"/>
+                    <text x="16" y="20" textAnchor="middle" fontSize="10" fill="#facc15">₹</text>
+                  </svg>
+                </div>
               <div className={`text-2xl font-bold ${themeClasses.text}`}>
                 ₹{rides.reduce((sum, ride) => sum + (ride.fare || ride.amount || 0), 0).toFixed(2)}
               </div>
@@ -303,7 +326,13 @@ const Rides = () => {
           </div>
         ) : (
           <div className="text-center py-16">
-            <div className="text-8xl mb-6">🚲</div>
+            <div className="text-8xl mb-6 flex justify-center">
+              <svg width="64" height="64" viewBox="0 0 64 64" fill="none">
+                <circle cx="32" cy="32" r="28" fill="#e5e7eb" stroke="#22c55e" strokeWidth="4"/>
+                <rect x="24" y="30" width="16" height="4" rx="2" fill="#22c55e"/>
+                <rect x="30" y="24" width="4" height="16" rx="2" fill="#22c55e"/>
+              </svg>
+            </div>
             <h3 className={`text-3xl font-bold ${themeClasses.text} mb-4`}>No Rides Yet</h3>
             <p className={`${themeClasses.textSecondary} text-lg mb-8`}>
               Start your first eco-friendly journey today!
@@ -312,7 +341,7 @@ const Rides = () => {
               onClick={() => window.location.href = '/stations'}
               className="bg-gradient-to-r from-evgreen to-green-400 text-black px-8 py-4 rounded-xl font-semibold hover:scale-105 transition-all duration-300 shadow-lg text-lg"
             >
-              Find Stations 🗺️
+              Find Stations
             </button>
           </div>
         )}

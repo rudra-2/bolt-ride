@@ -101,7 +101,7 @@ export default function Wallet() {
         <div className="flex justify-between items-center mb-8">
           <div>
             <h1 className="text-4xl font-black mb-2">
-              <span className="text-evgreen">💳 Wallet</span>
+              <span className="text-evgreen">Wallet</span>
             </h1>
             <p className={`text-lg ${darkMode ? "text-gray-300" : "text-gray-600"}`}>
               Manage your ride credits and top up your balance
@@ -111,7 +111,7 @@ export default function Wallet() {
             to="/dashboard"
             className="bg-gray-500/20 hover:bg-gray-500/30 text-gray-400 hover:text-white px-4 py-2 rounded-xl transition-all duration-300"
           >
-            ← Dashboard
+            Dashboard
           </Link>
         </div>
 
@@ -130,7 +130,13 @@ export default function Wallet() {
         {/* Current Balance Card */}
         <div className={`${cardClasses} rounded-2xl p-8 mb-8 text-center`}>
           <div className="mb-6">
-            <div className="text-6xl text-evgreen mb-4">💰</div>
+            {/* Premium Wallet SVG Icon */}
+            <div className="mb-4 flex justify-center">
+              <svg className="w-16 h-16" viewBox="0 0 64 64" fill="none">
+                <circle cx="32" cy="32" r="28" fill="#2563eb" />
+                <text x="32" y="40" text-anchor="middle" font-size="32" fill="#fff" font-family="Arial, Helvetica, sans-serif">₹</text>
+              </svg>
+            </div>
             <h2 className={`text-lg font-semibold ${darkMode ? "text-gray-300" : "text-gray-600"} mb-2`}>
               Current Balance
             </h2>
@@ -145,9 +151,6 @@ export default function Wallet() {
           {balance < 50 && (
             <div className="bg-yellow-500/20 border border-yellow-500/50 rounded-xl p-4">
               <div className="flex items-center justify-center">
-                <svg className="w-5 h-5 text-yellow-400 mr-2" fill="currentColor" viewBox="0 0 20 20">
-                  <path fillRule="evenodd" d="M18 10a8 8 0 11-16 0 8 8 0 0116 0zm-7 4a1 1 0 11-2 0 1 1 0 012 0zm-1-9a1 1 0 00-1 1v4a1 1 0 102 0V6a1 1 0 00-1-1z" clipRule="evenodd" />
-                </svg>
                 <span className="text-yellow-300 text-sm font-medium">
                   Low balance! Add money to continue riding.
                 </span>
@@ -229,7 +232,7 @@ export default function Wallet() {
                 Processing...
               </div>
             ) : (
-              `💳 Add ${amount ? `₹${amount}` : 'Money'}`
+              `Add ${amount ? `₹${amount}` : 'Money'}`
             )}
           </button>
 
@@ -251,31 +254,51 @@ export default function Wallet() {
         </div>
 
         {/* Wallet Features */}
-        <div className="grid grid-cols-1 md:grid-cols-3 gap-6 mt-8">
-          <div className={`${cardClasses} rounded-xl p-6 text-center`}>
-            <div className="text-4xl text-evgreen mb-3">🚴‍♂️</div>
-            <h4 className="font-bold text-lg mb-2">Ride Credits</h4>
-            <p className={`text-sm ${darkMode ? "text-gray-400" : "text-gray-600"}`}>
-              Use your balance for eco-friendly bike rides across Ahmedabad
-            </p>
-          </div>
+          <div className="grid grid-cols-1 md:grid-cols-3 gap-6 mt-8">
+            {/* Ride Credits SVG */}
+            <div className={`${cardClasses} rounded-xl p-6 text-center`}>
+              <div className="mb-3 flex justify-center">
+                <svg className="w-10 h-10 text-evgreen" fill="none" viewBox="0 0 32 32" stroke="currentColor">
+                  <circle cx="16" cy="16" r="14" stroke="currentColor" strokeWidth="2" fill="currentColor" opacity="0.1" />
+                  <path d="M10 22l6-12 6 12" stroke="currentColor" strokeWidth="2" fill="none" />
+                </svg>
+              </div>
+              <h4 className="font-bold text-lg mb-2">Ride Credits</h4>
+              <p className={`text-sm ${darkMode ? "text-gray-400" : "text-gray-600"}`}>
+                Use your balance for eco-friendly bike rides across Ahmedabad
+              </p>
+            </div>
 
-          <div className={`${cardClasses} rounded-xl p-6 text-center`}>
-            <div className="text-4xl text-purple-400 mb-3">🎟️</div>
-            <h4 className="font-bold text-lg mb-2">Passes</h4>
-            <p className={`text-sm ${darkMode ? "text-gray-400" : "text-gray-600"}`}>
-              Buy weekly or monthly passes for unlimited rides
-            </p>
-          </div>
+            {/* Passes SVG */}
+            <div className={`${cardClasses} rounded-xl p-6 text-center`}>
+              <div className="mb-3 flex justify-center">
+                <svg className="w-10 h-10 text-purple-400" fill="none" viewBox="0 0 32 32" stroke="currentColor">
+                  <rect x="6" y="10" width="20" height="12" rx="4" fill="currentColor" opacity="0.1" />
+                  <rect x="6" y="10" width="20" height="12" rx="4" stroke="currentColor" strokeWidth="2" />
+                  <path d="M10 16h12" stroke="currentColor" strokeWidth="2" />
+                </svg>
+              </div>
+              <h4 className="font-bold text-lg mb-2">Passes</h4>
+              <p className={`text-sm ${darkMode ? "text-gray-400" : "text-gray-600"}`}>
+                Buy weekly or monthly passes for unlimited rides
+              </p>
+            </div>
 
-          <div className={`${cardClasses} rounded-xl p-6 text-center`}>
-            <div className="text-4xl text-blue-400 mb-3">🛡️</div>
-            <h4 className="font-bold text-lg mb-2">Secure</h4>
-            <p className={`text-sm ${darkMode ? "text-gray-400" : "text-gray-600"}`}>
-              Your money is safe with encrypted transactions
-            </p>
+            {/* Secure SVG */}
+            <div className={`${cardClasses} rounded-xl p-6 text-center`}>
+              <div className="mb-3 flex justify-center">
+                <svg className="w-10 h-10 text-blue-400" fill="none" viewBox="0 0 32 32" stroke="currentColor">
+                  <rect x="10" y="14" width="12" height="8" rx="4" fill="currentColor" opacity="0.1" />
+                  <rect x="10" y="14" width="12" height="8" rx="4" stroke="currentColor" strokeWidth="2" />
+                  <circle cx="16" cy="18" r="2" fill="currentColor" />
+                </svg>
+              </div>
+              <h4 className="font-bold text-lg mb-2">Secure</h4>
+              <p className={`text-sm ${darkMode ? "text-gray-400" : "text-gray-600"}`}>
+                Your money is safe with encrypted transactions
+              </p>
+            </div>
           </div>
-        </div>
 
         {/* Quick Actions */}
         <div className="flex flex-col sm:flex-row gap-4 mt-8">
@@ -283,19 +306,19 @@ export default function Wallet() {
             to="/buy-passes"
             className="flex-1 bg-purple-500 hover:bg-purple-600 text-white px-6 py-3 rounded-xl font-semibold text-center transition-all duration-300 hover:scale-105"
           >
-            🎟️ Buy Ride Passes
+            Buy Ride Passes
           </Link>
           <Link
             to="/rides"
             className="flex-1 bg-blue-500 hover:bg-blue-600 text-white px-6 py-3 rounded-xl font-semibold text-center transition-all duration-300 hover:scale-105"
           >
-            📊 Ride History
+            Ride History
           </Link>
           <Link
             to="/dashboard"
             className="flex-1 bg-evgreen hover:bg-green-600 text-black px-6 py-3 rounded-xl font-semibold text-center transition-all duration-300 hover:scale-105"
           >
-            🚲 Find Bikes
+            Find Bikes
           </Link>
         </div>
       </div>

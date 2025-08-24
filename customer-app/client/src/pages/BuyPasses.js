@@ -43,7 +43,6 @@ const BuyPasses = () => {
             duration: '24 hours',
             rides: 'Unlimited',
             description: 'Perfect for a day of exploring',
-            icon: '🌅',
             color: 'from-blue-500 to-blue-600',
             savings: '60% savings on regular fares',
             features: ['Unlimited 30-min rides', 'All station access', '24/7 support']
@@ -55,7 +54,6 @@ const BuyPasses = () => {
             duration: '7 days',
             rides: 'Unlimited',
             description: 'Great for regular commuters',
-            icon: '📅',
             color: 'from-purple-500 to-purple-600',
             savings: '70% savings on regular fares',
             features: ['Unlimited 45-min rides', 'Priority bike access', 'Extended ride time'],
@@ -68,7 +66,6 @@ const BuyPasses = () => {
             duration: '30 days',
             rides: 'Unlimited',
             description: 'Best value for daily riders',
-            icon: '📆',
             color: 'from-evgreen to-green-500',
             savings: '80% savings on regular fares',
             features: ['Unlimited 60-min rides', 'Premium bike access', 'Free ride extensions', 'Priority support']
@@ -80,7 +77,6 @@ const BuyPasses = () => {
             duration: '30 days',
             rides: 'Unlimited',
             description: 'Special discount for students',
-            icon: '🎓',
             color: 'from-orange-500 to-red-500',
             savings: '85% savings with student ID',
             features: ['Unlimited 45-min rides', 'Student verification required', 'Campus area priority']
@@ -145,7 +141,7 @@ const BuyPasses = () => {
                 <div className="flex justify-between items-center mb-8">
                     <div>
                         <h1 className="text-4xl font-bold bg-gradient-to-r from-evgreen to-green-300 bg-clip-text text-transparent mb-2">
-                            Ride Passes 🎟️
+                            Ride Passes
                         </h1>
                         <p className={themeClasses.textSecondary}>Choose the perfect pass for your riding needs</p>
                     </div>
@@ -154,7 +150,13 @@ const BuyPasses = () => {
                         {/* Wallet Balance */}
                         <div className={`${themeClasses.card} bg-gradient-to-r backdrop-blur-sm rounded-xl p-4 border`}>
                             <div className="flex items-center">
-                                <span className="text-evgreen text-2xl mr-2">💰</span>
+                                <span className="text-evgreen text-2xl mr-2"></span>
+                                                                <span className="mr-2">
+                                                                    <svg className="w-6 h-6" viewBox="0 0 24 24" fill="none">
+                                                                        <circle cx="12" cy="12" r="10" fill="#2563eb" />
+                                                                        <text x="12" y="16" text-anchor="middle" font-size="12" fill="#fff" font-family="Arial, Helvetica, sans-serif">₹</text>
+                                                                    </svg>
+                                                                </span>
                                 <div>
                                     <div className={`text-sm ${themeClasses.textSecondary}`}>Wallet Balance</div>
                                     <div className={`text-lg font-bold ${themeClasses.text}`}>₹{walletBalance}</div>
@@ -167,7 +169,15 @@ const BuyPasses = () => {
                             onClick={() => setIsDarkMode(!isDarkMode)}
                             className={`${themeClasses.button} p-3 rounded-full border ${isDarkMode ? 'border-gray-600' : 'border-gray-300'} transition-all duration-300 hover:scale-110`}
                         >
-                            {isDarkMode ? '🌙' : '☀️'}
+                                                        {isDarkMode ? (
+                                                            <svg className="w-5 h-5 text-yellow-400" fill="currentColor" viewBox="0 0 20 20">
+                                                                <path d="M17.293 13.293A8 8 0 016.707 2.707a8.001 8.001 0 1010.586 10.586z" />
+                                                            </svg>
+                                                        ) : (
+                                                            <svg className="w-5 h-5 text-evgreen" fill="currentColor" viewBox="0 0 20 20">
+                                                                <circle cx="10" cy="10" r="5" fill="currentColor" />
+                                                            </svg>
+                                                        )}
                         </button>
                     </div>
                 </div>
@@ -192,7 +202,14 @@ const BuyPasses = () => {
 
                             {/* Pass Header */}
                             <div className="text-center mb-6">
-                                <div className="text-5xl mb-3">{pass.icon}</div>
+                                {/* No icon for pass card header */}
+                                                                <div className="mb-3 flex justify-center">
+                                                                    <svg className="w-12 h-12 text-evgreen" fill="none" viewBox="0 0 32 32" stroke="currentColor">
+                                                                        <rect x="6" y="10" width="20" height="12" rx="4" fill="currentColor" opacity="0.1" />
+                                                                        <rect x="6" y="10" width="20" height="12" rx="4" stroke="currentColor" strokeWidth="2" />
+                                                                        <path d="M10 16h12" stroke="currentColor" strokeWidth="2" />
+                                                                    </svg>
+                                                                </div>
                                 <h3 className={`text-xl font-bold ${themeClasses.text} mb-2`}>{pass.name}</h3>
                                 <div className="text-3xl font-bold text-evgreen mb-2">₹{pass.price}</div>
                                 <p className={`text-sm ${themeClasses.textSecondary}`}>{pass.description}</p>
@@ -217,6 +234,11 @@ const BuyPasses = () => {
                                     {pass.features.map((feature, index) => (
                                         <li key={index} className={`text-sm ${themeClasses.textSecondary} flex items-center`}>
                                             <span className="text-evgreen mr-2">✓</span>
+                                                                                        <span className="mr-2">
+                                                                                            <svg className="w-4 h-4 text-evgreen" fill="none" viewBox="0 0 20 20" stroke="currentColor">
+                                                                                                <path strokeLinecap="round" strokeLinejoin="round" strokeWidth={2} d="M5 10l4 4L15 7" />
+                                                                                            </svg>
+                                                                                        </span>
                                             {feature}
                                         </li>
                                     ))}
@@ -247,20 +269,39 @@ const BuyPasses = () => {
 
                 {/* Benefits Section */}
                 <div className={`bg-gradient-to-br ${themeClasses.card} backdrop-blur-sm rounded-2xl p-8 border mb-8`}>
-                    <h2 className={`text-2xl font-bold ${themeClasses.text} mb-6 text-center`}>Why Buy a Pass? 🌟</h2>
+                    <h2 className={`text-2xl font-bold ${themeClasses.text} mb-6 text-center`}>Why Buy a Pass? </h2>
+                    <h2 className={`text-2xl font-bold ${themeClasses.text} mb-6 text-center`}>Why Buy a Pass?</h2>
                     <div className="grid grid-cols-1 md:grid-cols-3 gap-6">
                         <div className="text-center">
-                            <div className="text-4xl mb-3">💰</div>
+                            <div className="text-4xl mb-3"></div>
+                                                        <div className="mb-3 flex justify-center">
+                                                            <svg className="w-8 h-8 text-evgreen" fill="none" viewBox="0 0 24 24" stroke="currentColor">
+                                                                <rect x="4" y="8" width="16" height="10" rx="4" fill="currentColor" opacity="0.1" />
+                                                                <rect x="4" y="8" width="16" height="10" rx="4" stroke="currentColor" strokeWidth="2" />
+                                                                <circle cx="18" cy="13" r="2" fill="currentColor" />
+                                                            </svg>
+                                                        </div>
                             <h3 className={`font-semibold ${themeClasses.text} mb-2`}>Save Money</h3>
                             <p className={themeClasses.textSecondary}>Up to 85% savings compared to pay-per-ride</p>
                         </div>
                         <div className="text-center">
-                            <div className="text-4xl mb-3">🚀</div>
+                            <div className="text-4xl mb-3"></div>
+                                                        <div className="mb-3 flex justify-center">
+                                                            <svg className="w-8 h-8 text-blue-400" fill="none" viewBox="0 0 24 24" stroke="currentColor">
+                                                                <path strokeLinecap="round" strokeLinejoin="round" strokeWidth={2} d="M13 10V3L4 14h7v7l9-11h-7z" />
+                                                            </svg>
+                                                        </div>
                             <h3 className={`font-semibold ${themeClasses.text} mb-2`}>Priority Access</h3>
                             <p className={themeClasses.textSecondary}>Skip the queue and get bikes faster</p>
                         </div>
                         <div className="text-center">
-                            <div className="text-4xl mb-3">🎯</div>
+                            <div className="text-4xl mb-3"></div>
+                                                        <div className="mb-3 flex justify-center">
+                                                            <svg className="w-8 h-8 text-purple-400" fill="none" viewBox="0 0 24 24" stroke="currentColor">
+                                                                <circle cx="12" cy="12" r="10" stroke="currentColor" strokeWidth="2" fill="currentColor" opacity="0.1" />
+                                                                <circle cx="12" cy="12" r="4" fill="currentColor" />
+                                                            </svg>
+                                                        </div>
                             <h3 className={`font-semibold ${themeClasses.text} mb-2`}>Unlimited Rides</h3>
                             <p className={themeClasses.textSecondary}>Ride as much as you want within the duration</p>
                         </div>
@@ -269,19 +310,23 @@ const BuyPasses = () => {
 
                 {/* How it Works */}
                 <div className={`bg-gradient-to-br ${themeClasses.card} backdrop-blur-sm rounded-2xl p-8 border`}>
-                    <h2 className={`text-2xl font-bold ${themeClasses.text} mb-6 text-center`}>How It Works 📋</h2>
+                    <h2 className={`text-2xl font-bold ${themeClasses.text} mb-6 text-center`}>How It Works </h2>
+                    <h2 className={`text-2xl font-bold ${themeClasses.text} mb-6 text-center`}>How It Works</h2>
                     <div className="grid grid-cols-1 md:grid-cols-4 gap-6">
                         {[
-                            { step: '1', icon: '💳', title: 'Choose Pass', desc: 'Select the perfect pass for your needs' },
-                            { step: '2', icon: '🛒', title: 'Purchase', desc: 'Buy instantly with your wallet balance' },
-                            { step: '3', icon: '📱', title: 'Activate', desc: 'Pass activates automatically after purchase' },
-                            { step: '4', icon: '🚴‍♂️', title: 'Ride', desc: 'Enjoy unlimited rides within duration' }
+                            { step: '1', icon: '', title: 'Choose Pass', desc: 'Select the perfect pass for your needs' },
+                            { step: '2', icon: '', title: 'Purchase', desc: 'Buy instantly with your wallet balance' },
+                            { step: '3', icon: '', title: 'Activate', desc: 'Pass activates automatically after purchase' },
+                            { step: '4', icon: '', title: 'Ride', desc: 'Enjoy unlimited rides within duration' }
                         ].map((item) => (
                             <div key={item.step} className="text-center">
                                 <div className="w-12 h-12 bg-evgreen/20 rounded-full flex items-center justify-center mx-auto mb-3">
                                     <span className="text-evgreen font-bold">{item.step}</span>
                                 </div>
                                 <div className="text-3xl mb-2">{item.icon}</div>
+                                                                <div className="mb-2 flex justify-center">
+                                                        
+                                                                </div>
                                 <h3 className={`font-semibold ${themeClasses.text} mb-2`}>{item.title}</h3>
                                 <p className={`text-sm ${themeClasses.textSecondary}`}>{item.desc}</p>
                             </div>
