@@ -1,5 +1,6 @@
 import React, { useState, useEffect, useRef } from 'react';
 import { useNavigate, useLocation } from 'react-router-dom';
+import { Building2, Bike, Flag, MapPin, Clock, Navigation } from 'lucide-react';
 
 const ActiveRide = () => {
     const navigate = useNavigate();
@@ -310,8 +311,8 @@ const ActiveRide = () => {
                 <div className="absolute inset-0 bg-gradient-to-br from-blue-900 to-green-900">
                     {/* Ahmedabad City Boundary */}
                     <div className="absolute inset-4 border-4 border-dashed border-evgreen/50 rounded-xl bg-evgreen/5">
-                        <div className="absolute -top-8 left-4 bg-evgreen/30 text-evgreen px-3 py-1 rounded-full text-sm font-bold">
-                            🏙️ Ahmedabad City Riding Zone
+                        <div className="absolute -top-8 left-4 bg-evgreen/30 text-evgreen px-3 py-1 rounded-full text-sm font-bold flex items-center gap-1">
+                            <Building2 className="w-4 h-4" /> Ahmedabad City Riding Zone
                         </div>
                         
                         {/* User Location in the city */}
@@ -323,7 +324,7 @@ const ActiveRide = () => {
                             <div className="relative">
                                 <div className="w-8 h-8 bg-blue-500 rounded-full border-4 border-white shadow-lg animate-pulse">
                                     <div className="w-full h-full flex items-center justify-center text-white text-xs font-bold">
-                                        🚴‍♂️
+                                        <Bike className="w-4 h-4" />
                                     </div>
                                 </div>
                                 <div className="absolute inset-0 w-8 h-8 bg-blue-500 rounded-full animate-ping opacity-50"></div>
@@ -360,7 +361,7 @@ const ActiveRide = () => {
                                             canEndHere ? 'bg-evgreen' : 'bg-orange-500'
                                         }`}>
                                             <div className="w-full h-full flex items-center justify-center text-white text-xs">
-                                                {canEndHere ? '🏁' : '🚲'}
+                                                {canEndHere ? <Flag className="w-3 h-3" /> : <Bike className="w-3 h-3" />}
                                             </div>
                                         </div>
                                         <div className="absolute -bottom-6 left-1/2 transform -translate-x-1/2 bg-black/75 text-white px-1 py-0.5 rounded text-xs whitespace-nowrap">
@@ -390,10 +391,10 @@ const ActiveRide = () => {
                     {/* Map Controls & Info */}
                     <div className="absolute bottom-4 left-4 bg-black/75 text-white p-3 rounded-xl">
                         <div className="text-xs space-y-1">
-                            <div>📍 Current: {currentLocation ? `${currentLocation.lat.toFixed(4)}, ${currentLocation.lng.toFixed(4)}` : 'Loading...'}</div>
-                            <div>🚴‍♂️ Vehicle: {rideData?.vehicleId}</div>
-                            <div>⏱️ Started: {rideStartTime.current.toLocaleTimeString()}</div>
-                            <div>🏁 {nearbyStations.filter(s => {
+                            <div className="flex items-center gap-1"><MapPin className="w-3 h-3" /> Current: {currentLocation ? `${currentLocation.lat.toFixed(4)}, ${currentLocation.lng.toFixed(4)}` : 'Loading...'}</div>
+                            <div className="flex items-center gap-1"><Bike className="w-3 h-3" /> Vehicle: {rideData?.vehicleId}</div>
+                            <div className="flex items-center gap-1"><Clock className="w-3 h-3" /> Started: {rideStartTime.current.toLocaleTimeString()}</div>
+                            <div className="flex items-center gap-1"><Flag className="w-3 h-3" /> {nearbyStations.filter(s => {
                                 const sLat = s.coordinates?.latitude || s.location?.coordinates?.[1] || 0;
                                 const sLng = s.coordinates?.longitude || s.location?.coordinates?.[0] || 0;
                                 return currentLocation && calculateDistance(currentLocation.lat, currentLocation.lng, sLat, sLng) <= 0.1;
@@ -431,8 +432,8 @@ const ActiveRide = () => {
                             <svg className="w-5 h-5 mr-2" fill="currentColor" viewBox="0 0 20 20">
                                 <path fillRule="evenodd" d="M16.707 5.293a1 1 0 010 1.414l-8 8a1 1 0 01-1.414 0l-4-4a1 1 0 011.414-1.414L8 12.586l7.293-7.293a1 1 0 011.414 0z" clipRule="evenodd" />
                             </svg>
-                            <span className="text-sm font-medium">
-                                🏁 You can end your ride at {selectedEndStation?.station_name}
+                            <span className="text-sm font-medium flex items-center gap-1">
+                                <Flag className="w-4 h-4" /> You can end your ride at {selectedEndStation?.station_name}
                             </span>
                         </div>
                     </div>
