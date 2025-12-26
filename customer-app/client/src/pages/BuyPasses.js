@@ -1,4 +1,5 @@
 import React, { useState, useEffect } from 'react';
+import { PartyPopper, XCircle, Check } from 'lucide-react';
 
 const BuyPasses = () => {
     const [selectedPass, setSelectedPass] = useState(null);
@@ -108,18 +109,18 @@ const BuyPasses = () => {
 
             if (response.ok) {
                 const result = await response.json();
-                alert(`🎉 ${pass.name} purchased successfully! Valid for ${pass.duration}.`);
+                alert(`${pass.name} purchased successfully! Valid for ${pass.duration}.`);
 
                 // Update wallet balance from server response
                 setWalletBalance(result.newBalance || (walletBalance - pass.price));
             } else {
                 const error = await response.json();
-                alert(`❌ Purchase failed: ${error.message}`);
+                alert(`Purchase failed: ${error.message}`);
             }
 
         } catch (error) {
             console.error('Purchase error:', error);
-            alert('❌ Purchase failed. Please check your connection and try again.');
+            alert('Purchase failed. Please check your connection and try again.');
         } finally {
             setLoading(false);
             setSelectedPass(null);
@@ -233,7 +234,7 @@ const BuyPasses = () => {
                                 <ul className="space-y-1">
                                     {pass.features.map((feature, index) => (
                                         <li key={index} className={`text-sm ${themeClasses.textSecondary} flex items-center`}>
-                                            <span className="text-evgreen mr-2">✓</span>
+                                            <Check className="w-4 h-4 text-evgreen mr-2" />
                                                                                         <span className="mr-2">
                                                                                             <svg className="w-4 h-4 text-evgreen" fill="none" viewBox="0 0 20 20" stroke="currentColor">
                                                                                                 <path strokeLinecap="round" strokeLinejoin="round" strokeWidth={2} d="M5 10l4 4L15 7" />
