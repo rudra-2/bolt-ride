@@ -479,9 +479,7 @@ purple-400/50 to-transparent z-0"></div>
             <div>
               <h3 className="text-2xl font-bold bg-gradient-to-r from-indigo-400 to-purple-400 bg-clip-text text-transparent mb-4 flex items-center gap-2">
                 BoltRide
-                <Zap className="w-6 h-6 text-indigo-400 animate-pulse" /
-                BoltRide
-                <svg className="w-6 h-6 animate-spin" style={{animationDuration: '2s'}} viewBox="0 0 24 24" fill="currentColor"><path d="M13 2L3 14h9l-1 8 10-12h-9l1-8z"/></svg>
+                <Zap className="w-6 h-6 text-indigo-400 animate-pulse" />
               </h3>
               <p className="text-gray-400">
                 Making urban transportation sustainable, accessible, and enjoyable for everyone.
