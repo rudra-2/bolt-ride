@@ -246,17 +246,6 @@ function BikeModel() {
             <div className="absolute bottom-4 left-4 bg-evgreen text-white px-4 py-2 rounded-full animate-pulse shadow-lg">
               <span className="text-sm font-medium flex items-center gap-1"><Zap className="w-4 h-4" /> 100% Electric</span>
             </div>
-
-            <div className="absolute top-1/2 -left-4 bg-white/90 backdrop-blur-sm px-3 py-2 rounded-full border border-evgreen/20 animate-pulse shadow-lg" style={{ animationDelay: '1.5s' }}>
-              <span className="text-xs font-medium text-evgreen flex items-center gap-1"><Leaf className="w-4 h-4" /> Eco-Friendly</span>
-            </div>
-          </div>
-        </div>
-
-        {/* Scroll Indicator */}
-        <div className="absolute bottom-8 left-1/2 transform -translate-x-1/2 animate-bounce" style={{ animationDelay: '3s' }}>
-          <div className="w-6 h-10 border-2 border-evgreen rounded-full flex justify-center bg-white/50 backdrop-blur-sm shadow-lg">
-            <div className="w-1 h-3 bg-evgreen rounded-full mt-2 animate-ping"></div>
           </div>
         </div>
       </div>
