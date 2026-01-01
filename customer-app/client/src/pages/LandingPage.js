@@ -469,7 +469,7 @@ function BikeModel() {
             </div>
           </div>
           <div className="border-t border-gray-700 mt-8 pt-8 text-center">
-            <p className="text-gray-400 flex items-center justify-center gap-1">&copy; 2025 BoltRide. All rights reserved. Made with <Heart className="w-4 h-4 text-red-500 fill-red-500 animate-pulse" /> for a sustainable future.</p>
+            <p className="text-gray-400 flex items-center justify-center gap-1">&copy; 2025-26 BoltRide. All rights reserved. Made with <Heart className="w-4 h-4 text-red-500 fill-red-500 animate-pulse" /> for a sustainable future.</p>
           </div>
         </div>
       </footer>
