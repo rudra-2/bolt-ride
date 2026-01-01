@@ -138,13 +138,13 @@ function BikeModel() {
       <Navbar />
 
       {/* Hero Section */}
-      <div className="min-h-screen flex flex-col items-center justify-center bg-gradient-to-br from-indigo-50 via-purple-50 to-blue-50 dark:from-gray-900 dark:via-indigo-950 dark:to-purple-950 relative overflow-hidden transition-colors duration-500">
+      <div className="min-h-screen flex flex-col items-center justify-center bg-gradient-to-br from-gray-50 via-white to-evgreen/10 dark:from-gray-900 dark:via-gray-800 dark:to-evgreen/20 relative overflow-hidden transition-colors duration-500">
         {/* Animated background elements */}
-        <div className="absolute inset-0 opacity-30">
-          <div className="absolute top-20 left-10 w-72 h-72 bg-indigo-400/30 rounded-full blur-3xl animate-pulse"></div>
-          <div className="absolute bottom-20 right-10 w-96 h-96 bg-purple-400/25 rounded-full blur-3xl animate-pulse" style={{ animationDelay: '2s' }}></div>
-          <div className="absolute top-1/2 left-1/4 w-48 h-48 bg-blue-400/30 rounded-full blur-2xl animate-bounce" style={{ animationDelay: '1s' }}></div>
-          <div className="absolute top-3/4 right-1/4 w-64 h-64 bg-violet-400/20 rounded-full blur-3xl animate-pulse" style={{ animationDelay: '3s' }}></div>
+        <div className="absolute inset-0 opacity-20">
+          <div className="absolute top-20 left-10 w-72 h-72 bg-evgreen/20 rounded-full blur-3xl animate-pulse"></div>
+          <div className="absolute bottom-20 right-10 w-96 h-96 bg-evgreen/15 rounded-full blur-3xl animate-pulse" style={{ animationDelay: '2s' }}></div>
+          <div className="absolute top-1/2 left-1/4 w-48 h-48 bg-evgreen/25 rounded-full blur-2xl animate-bounce" style={{ animationDelay: '1s' }}></div>
+          <div className="absolute top-3/4 right-1/4 w-64 h-64 bg-green-400/10 rounded-full blur-3xl animate-pulse" style={{ animationDelay: '3s' }}></div>
         </div>
 
         {/* Main Content Container */}
@@ -162,9 +162,8 @@ function BikeModel() {
                 <span className="inline-block animate-bounce" style={{ animationDelay: '0.6s' }}>h</span>
                 <span className="inline-block animate-bounce" style={{ animationDelay: '0.7s' }}>e</span>
                 <br />
-                <span className="bg-gradient-to-r from-indigo-600 via-purple-600 to-blue-600 bg-clip-text text-transparent flex items-center justify-center lg:justify-start gap-3" style={{ animationDelay: '0.8s' }}>
-                  Future
-                  <Zap className="w-12 h-12 text-indigo-600 animate-pulse" style={{animationDuration: '1.5s'}} />
+                <span className="text-evgreen bg-gradient-to-r from-evgreen to-green-400 bg-clip-text text-transparent animate-pulse inline-flex items-center gap-2" style={{ animationDelay: '0.8s' }}>
+                  Future <Zap className="w-10 h-10 text-evgreen animate-pulse" />
                 </span>
               </h1>
 
@@ -176,26 +175,27 @@ function BikeModel() {
               </div>
             </div>
 
-            <p className="text-lg text-gray-600 dark:text-gray-300 max-w-xl leading-relaxed transition-colors duration-500" style={{ animationDelay: '1.4s' }}>
+            <p className="text-lg text-gray-500 dark:text-gray-400 max-w-xl leading-relaxed animate-pulse transition-colors duration-500" style={{ animationDelay: '1.4s' }}>
               Experience the future of urban mobility with our
-              <span className="text-indigo-600 dark:text-indigo-400 font-semibold"> eco-friendly</span> bike-sharing service.
-              <span className="text-purple-600 dark:text-purple-400 font-semibold"> Sustainable</span>,
-              <span className="text-blue-600 dark:text-blue-400 font-semibold"> convenient</span>, and
-              <span className="text-violet-600 dark:text-violet-400 font-semibold"> affordable</span> transportation.
+              <span className="text-evgreen font-semibold"> eco-friendly</span> bike-sharing service.
+              <span className="text-evgreen font-semibold"> Sustainable</span>,
+              <span className="text-evgreen font-semibold"> convenient</span>, and
+              <span className="text-evgreen font-semibold"> affordable</span> transportation.
             </p>
 
             {/* CTA Buttons */}
             <div className="flex flex-col sm:flex-row gap-4">
               <Link to="/signup" className="group relative">
-                <div className="absolute -inset-1 bg-gradient-to-r from-indigo-600 via-purple-600 to-blue-600 rounded-2xl blur opacity-25 group-hover:opacity-75 transition duration-1000 group-hover:duration-200"></div>
-                <button className="relative px-8 py-4 bg-gradient-to-r from-indigo-600 via-purple-600 to-blue-600 text-white font-bold rounded-xl hover:shadow-2xl transform hover:scale-105 transition-all duration-300 shadow-lg flex items-center gap-2">
+                <div className="absolute -inset-1 bg-gradient-to-r from-evgreen to-green-400 rounded-2xl blur opacity-25 group-hover:opacity-75 transition duration-1000 group-hover:duration-200 animate-pulse"></div>
+                <button className="relative px-8 py-4 bg-evgreen text-white font-bold rounded-xl hover:bg-green-500 transform hover:scale-105 transition-all duration-300 shadow-lg hover:shadow-evgreen/25 hover:shadow-2xl flex items-center gap-2">
                   Start Your Journey
-                  <Zap className="w-5 h-5 group-hover:animate-pulse" />
+                  <Zap className="w-5 h-5" />
+                  <ArrowRight className="w-5 h-5 group-hover:translate-x-1 transition-transform" />
                 </button>
               </Link>
 
               <Link to="/login" className="group">
-                <button className="px-8 py-4 border-2 border-indigo-600 dark:border-indigo-400 text-indigo-600 dark:text-indigo-400 font-bold rounded-xl hover:bg-indigo-600 hover:text-white dark:hover:bg-indigo-500 transform hover:scale-105 transition-all duration-300 shadow-lg backdrop-blur-sm flex items-center gap-2">
+                <button className="px-8 py-4 border-2 border-evgreen text-evgreen font-bold rounded-xl hover:bg-evgreen hover:text-white transform hover:scale-105 transition-all duration-300 shadow-lg hover:shadow-evgreen/25 hover:shadow-2xl backdrop-blur-sm flex items-center gap-2">
                   Sign In
                   <ArrowRight className="w-5 h-5 group-hover:translate-x-1 transition-transform" />
                 </button>
@@ -205,23 +205,23 @@ function BikeModel() {
             {/* Stats */}
             <div className="grid grid-cols-3 gap-8 pt-8">
               <div className="text-center group cursor-pointer transform hover:scale-110 transition-all duration-300">
-                <div className="text-3xl font-black bg-gradient-to-r from-indigo-600 to-purple-600 bg-clip-text text-transparent group-hover:animate-bounce">50+</div>
-                <div className="text-sm text-gray-600 dark:text-gray-400 font-medium">Stations</div>
+                <div className="text-3xl font-black text-evgreen group-hover:animate-bounce">50+</div>
+                <div className="text-sm text-gray-500 font-medium">Stations</div>
               </div>
               <div className="text-center group cursor-pointer transform hover:scale-110 transition-all duration-300">
-                <div className="text-3xl font-black bg-gradient-to-r from-purple-600 to-blue-600 bg-clip-text text-transparent group-hover:animate-bounce">1000+</div>
-                <div className="text-sm text-gray-600 dark:text-gray-400 font-medium">Rides</div>
+                <div className="text-3xl font-black text-evgreen group-hover:animate-bounce">1000+</div>
+                <div className="text-sm text-gray-500 font-medium">Rides</div>
               </div>
               <div className="text-center group cursor-pointer transform hover:scale-110 transition-all duration-300">
-                <div className="text-3xl font-black bg-gradient-to-r from-blue-600 to-indigo-600 bg-clip-text text-transparent group-hover:animate-bounce">24/7</div>
-                <div className="text-sm text-gray-600 dark:text-gray-400 font-medium">Available</div>
+                <div className="text-3xl font-black text-evgreen group-hover:animate-bounce">24/7</div>
+                <div className="text-sm text-gray-500 font-medium">Available</div>
               </div>
             </div>
           </div>
 
           {/* Right Content - 3D Bike */}
           <div className="flex-1 w-full h-[600px] relative">
-            <div className="absolute inset-0 bg-gradient-to-br from-indigo-500/5 via-purple-500/5 to-blue-500/5 rounded-3xl backdrop-blur-sm border border-indigo-200/20 dark:border-indigo-500/20 shadow-2xl"></div>
+            <div className="absolute inset-0 bg-gradient-to-br from-evgreen/5 to-green-400/5 rounded-3xl backdrop-blur-sm border border-evgreen/10 shadow-2xl"></div>
             <Canvas camera={{ position: [0, 3, 12], fov: 35 }}>
               <ambientLight intensity={1.8} />
               <directionalLight
@@ -239,100 +239,82 @@ function BikeModel() {
             </Canvas>
 
             {/* Floating UI Elements */}
-            <div className="absolute top-4 right-4 bg-white/90 dark:bg-gray-800/90 backdrop-blur-sm px-4 py-2 rounded-full border border-indigo-200 dark:border-indigo-500/30 animate-bounce shadow-lg" style={{ animationDelay: '2s' }}>
-              <span className="text-sm font-medium text-gray-700 dark:text-gray-200 flex items-center gap-2">
-                <MousePointer2 className="w-4 h-4 text-indigo-600 dark:text-indigo-400" />
-                Scroll to explore
-              </span>
+            <div className="absolute top-4 right-4 bg-white/90 backdrop-blur-sm px-4 py-2 rounded-full border border-evgreen/20 animate-bounce shadow-lg" style={{ animationDelay: '2s' }}>
+              <span className="text-sm font-medium text-gray-700 flex items-center gap-2"><MousePointer2 className="w-4 h-4 text-evgreen" /> Scroll to explore</span>
             </div>
 
-            <div className="absolute bottom-4 left-4 bg-gradient-to-r from-indigo-600 to-purple-600 text-white px-4 py-2 rounded-full animate-pulse shadow-lg">
-              <span className="text-sm font-medium flex items-center gap-2">
-                <Zap className="w-4 h-4" />
-                100% Electric
-              </span>
+            <div className="absolute bottom-4 left-4 bg-evgreen text-white px-4 py-2 rounded-full animate-pulse shadow-lg">
+              <span className="text-sm font-medium flex items-center gap-1"><Zap className="w-4 h-4" /> 100% Electric</span>
             </div>
 
-            <div className="absolute top-1/2 -left-4 bg-white/90 dark:bg-gray-800/90 backdrop-blur-sm px-3 py-2 rounded-full border border-green-200 dark:border-green-500/30 animate-pulse shadow-lg" style={{ animationDelay: '1.5s' }}>
-              <span className="text-xs font-medium text-green-600 dark:text-green-400 flex items-center gap-1">
-                <Leaf className="w-4 h-4" />
-                Eco-Friendly
-              </span>
+            <div className="absolute top-1/2 -left-4 bg-white/90 backdrop-blur-sm px-3 py-2 rounded-full border border-evgreen/20 animate-pulse shadow-lg" style={{ animationDelay: '1.5s' }}>
+              <span className="text-xs font-medium text-evgreen flex items-center gap-1"><Leaf className="w-4 h-4" /> Eco-Friendly</span>
             </div>
           </div>
         </div>
 
         {/* Scroll Indicator */}
         <div className="absolute bottom-8 left-1/2 transform -translate-x-1/2 animate-bounce" style={{ animationDelay: '3s' }}>
-          <div className="w-6 h-10 border-2 border-indigo-600 dark:border-indigo-400 rounded-full flex justify-center bg-white/50 dark:bg-gray-800/50 backdrop-blur-sm shadow-lg">
-            <div className="w-1 h-3 bg-gradient-to-b from-indigo-600 to-purple-600 rounded-full mt-2 animate-ping"></div>
+          <div className="w-6 h-10 border-2 border-evgreen rounded-full flex justify-center bg-white/50 backdrop-blur-sm shadow-lg">
+            <div className="w-1 h-3 bg-evgreen rounded-full mt-2 animate-ping"></div>
           </div>
         </div>
       </div>
 
       {/* Features Section */}
-      <div className="bg-gradient-to-b from-white via-indigo-50/30 to-purple-50/30 dark:from-gray-900 dark:via-indigo-950/30 dark:to-purple-950/30 py-20 relative">
+      <div className="bg-gradient-to-b from-white to-gray-50 py-20 relative">
         {/* Background decoration */}
-        <div className="absolute inset-0 opacity-20">
-          <div className="absolute top-10 right-20 w-64 h-64 bg-indigo-400/40 rounded-full blur-3xl animate-pulse"></div>
-          <div className="absolute bottom-10 left-20 w-80 h-80 bg-purple-400/30 rounded-full blur-3xl animate-pulse" style={{ animationDelay: '1s' }}></div>
+        <div className="absolute inset-0 opacity-10">
+          <div className="absolute top-10 right-20 w-64 h-64 bg-evgreen rounded-full blur-3xl animate-pulse"></div>
+          <div className="absolute bottom-10 left-20 w-80 h-80 bg-green-300 rounded-full blur-3xl animate-pulse" style={{ animationDelay: '1s' }}></div>
         </div>
 
         <div className="container mx-auto px-4 relative z-10">
-          <h2 className="text-5xl font-black text-center text-gray-800 dark:text-gray-100 mb-4">
+          <h2 className="text-5xl font-black text-center text-gray-800 mb-4">
             Why Choose
-            <span className="bg-gradient-to-r from-indigo-600 via-purple-600 to-blue-600 bg-clip-text text-transparent ml-3">BoltRide?</span>
+            <span className="text-evgreen ml-3">BoltRide?</span>
           </h2>
           <div className="text-center mb-16">
-            <div className="w-24 h-1 bg-gradient-to-r from-indigo-600 via-purple-600 to-blue-600 rounded-full mx-auto mb-6"></div>
-            <p className="text-xl text-gray-600 dark:text-gray-300 max-w-2xl mx-auto">
+            <div className="w-24 h-1 bg-gradient-to-r from-evgreen to-green-400 rounded-full mx-auto mb-6"></div>
+            <p className="text-xl text-gray-600 max-w-2xl mx-auto">
               Join thousands of riders who have already made the switch to sustainable transportation
             </p>
           </div>
 
           <div className="grid grid-cols-1 md:grid-cols-3 gap-8">
-            <div className="group bg-white/90 dark:bg-gray-800/90 backdrop-blur-sm p-8 rounded-2xl text-center hover:bg-white dark:hover:bg-gray-800 hover:shadow-2xl hover:shadow-green-500/10 transition-all duration-500 transform hover:-translate-y-2 border border-gray-200 dark:border-gray-700">
-              <div className="mb-6 inline-flex items-center justify-center w-20 h-20 rounded-2xl bg-gradient-to-br from-green-400 to-emerald-500 group-hover:scale-110 transition-transform duration-300 shadow-lg">
-                <Leaf className="w-10 h-10 text-white" />
-              </div>
-              <h3 className="text-2xl font-bold mb-4 text-gray-800 dark:text-gray-100 group-hover:text-green-600 dark:group-hover:text-green-400 transition-colors">Eco-Friendly</h3>
-              <p className="text-gray-600 dark:text-gray-300 leading-relaxed">
+            <div className="group bg-white/80 backdrop-blur-sm p-8 rounded-2xl text-center hover:bg-white hover:shadow-2xl hover:shadow-evgreen/10 transition-all duration-500 transform hover:-translate-y-2 border border-gray-100">
+              <div className="mb-6 inline-flex items-center justify-center w-20 h-20 rounded-2xl bg-evgreen/10 group-hover:scale-110 transition-transform duration-300 group-hover:animate-bounce"><Leaf className="w-10 h-10 text-evgreen" /></div>
+              <h3 className="text-2xl font-bold mb-4 text-gray-800 group-hover:text-evgreen transition-colors">Eco-Friendly</h3>
+              <p className="text-gray-600 leading-relaxed">
                 Zero emissions, zero guilt. Join us in making cities greener, one ride at a time.
                 Reduce your carbon footprint while exploring the city.
               </p>
-              <div className="mt-6 inline-flex items-center text-green-600 dark:text-green-400 font-semibold group-hover:gap-2 transition-all">
-                Learn More
-                <ChevronRight className="w-5 h-5 group-hover:translate-x-1 transition-transform" />
+              <div className="mt-6 inline-flex items-center text-evgreen font-semibold group-hover:translate-x-2 transition-transform gap-1">
+                Learn More <ChevronRight className="w-5 h-5" />
               </div>
             </div>
 
-            <div className="group bg-white/90 dark:bg-gray-800/90 backdrop-blur-sm p-8 rounded-2xl text-center hover:bg-white dark:hover:bg-gray-800 hover:shadow-2xl hover:shadow-indigo-500/10 transition-all duration-500 transform hover:-translate-y-2 border border-gray-200 dark:border-gray-700" style={{ animationDelay: '0.2s' }}>
-              <div className="mb-6 inline-flex items-center justify-center w-20 h-20 rounded-2xl bg-gradient-to-br from-indigo-500 to-purple-600 group-hover:scale-110 transition-transform duration-300 shadow-lg">
-                <Wallet className="w-10 h-10 text-white" />
-              </div>
-              <h3 className="text-2xl font-bold mb-4 text-gray-800 dark:text-gray-100 group-hover:text-indigo-600 dark:group-hover:text-indigo-400 transition-colors">Digital Wallet</h3>
-              <p className="text-gray-600 dark:text-gray-300 leading-relaxed">
+            <div className="group bg-white/80 backdrop-blur-sm p-8 rounded-2xl text-center hover:bg-white hover:shadow-2xl hover:shadow-evgreen/10 transition-all duration-500 transform hover:-translate-y-2 border border-gray-100" style={{ animationDelay: '0.2s' }}>
+              <div className="mb-6 inline-flex items-center justify-center w-20 h-20 rounded-2xl bg-evgreen/10 group-hover:scale-110 transition-transform duration-300 group-hover:animate-bounce"><Wallet className="w-10 h-10 text-evgreen" /></div>
+              <h3 className="text-2xl font-bold mb-4 text-gray-800 group-hover:text-evgreen transition-colors">Digital Wallet</h3>
+              <p className="text-gray-600 leading-relaxed">
                 Quick and secure digital payments. Top up your wallet and ride worry-free.
                 No cash needed, just seamless transactions.
               </p>
-              <div className="mt-6 inline-flex items-center text-indigo-600 dark:text-indigo-400 font-semibold group-hover:gap-2 transition-all">
-                Get Started
-                <ChevronRight className="w-5 h-5 group-hover:translate-x-1 transition-transform" />
+              <div className="mt-6 inline-flex items-center text-evgreen font-semibold group-hover:translate-x-2 transition-transform gap-1">
+                Get Started <ChevronRight className="w-5 h-5" />
               </div>
             </div>
 
-            <div className="group bg-white/90 dark:bg-gray-800/90 backdrop-blur-sm p-8 rounded-2xl text-center hover:bg-white dark:hover:bg-gray-800 hover:shadow-2xl hover:shadow-blue-500/10 transition-all duration-500 transform hover:-translate-y-2 border border-gray-200 dark:border-gray-700" style={{ animationDelay: '0.4s' }}>
-              <div className="mb-6 inline-flex items-center justify-center w-20 h-20 rounded-2xl bg-gradient-to-br from-blue-500 to-cyan-500 group-hover:scale-110 transition-transform duration-300 shadow-lg">
-                <MapPin className="w-10 h-10 text-white" />
-              </div>
-              <h3 className="text-2xl font-bold mb-4 text-gray-800 dark:text-gray-100 group-hover:text-blue-600 dark:group-hover:text-blue-400 transition-colors">Smart Stations</h3>
-              <p className="text-gray-600 dark:text-gray-300 leading-relaxed">
+            <div className="group bg-white/80 backdrop-blur-sm p-8 rounded-2xl text-center hover:bg-white hover:shadow-2xl hover:shadow-evgreen/10 transition-all duration-500 transform hover:-translate-y-2 border border-gray-100" style={{ animationDelay: '0.4s' }}>
+              <div className="mb-6 inline-flex items-center justify-center w-20 h-20 rounded-2xl bg-evgreen/10 group-hover:scale-110 transition-transform duration-300 group-hover:animate-bounce"><MapPin className="w-10 h-10 text-evgreen" /></div>
+              <h3 className="text-2xl font-bold mb-4 text-gray-800 group-hover:text-evgreen transition-colors">Smart Stations</h3>
+              <p className="text-gray-600 leading-relaxed">
                 Multiple stations across the city with real-time availability tracking.
                 Find the nearest station with GPS-enabled smart locating.
               </p>
-              <div className="mt-6 inline-flex items-center text-blue-600 dark:text-blue-400 font-semibold group-hover:gap-2 transition-all">
-                Find Stations
-                <ChevronRight className="w-5 h-5 group-hover:translate-x-1 transition-transform" />
+              <div className="mt-6 inline-flex items-center text-evgreen font-semibold group-hover:translate-x-2 transition-transform gap-1">
+                Find Stations <ChevronRight className="w-5 h-5" />
               </div>
             </div>
           </div>
@@ -341,20 +323,20 @@ function BikeModel() {
           <div className="mt-20 text-center">
             <div className="grid grid-cols-2 md:grid-cols-4 gap-8">
               <div className="group cursor-pointer">
-                <div className="text-4xl font-black bg-gradient-to-r from-indigo-600 to-purple-600 bg-clip-text text-transparent mb-2 group-hover:scale-110 transition-transform">99%</div>
-                <div className="text-gray-600 dark:text-gray-400 font-medium">Uptime</div>
+                <div className="text-4xl font-black text-evgreen mb-2 group-hover:scale-110 transition-transform">99%</div>
+                <div className="text-gray-600 font-medium">Uptime</div>
               </div>
               <div className="group cursor-pointer">
-                <div className="text-4xl font-black bg-gradient-to-r from-purple-600 to-pink-600 bg-clip-text text-transparent mb-2 group-hover:scale-110 transition-transform">5★</div>
-                <div className="text-gray-600 dark:text-gray-400 font-medium">Rating</div>
+                <div className="text-4xl font-black text-evgreen mb-2 group-hover:scale-110 transition-transform">5★</div>
+                <div className="text-gray-600 font-medium">Rating</div>
               </div>
               <div className="group cursor-pointer">
-                <div className="text-4xl font-black bg-gradient-to-r from-blue-600 to-cyan-600 bg-clip-text text-transparent mb-2 group-hover:scale-110 transition-transform">50K+</div>
-                <div className="text-gray-600 dark:text-gray-400 font-medium">Happy Users</div>
+                <div className="text-4xl font-black text-evgreen mb-2 group-hover:scale-110 transition-transform">50K+</div>
+                <div className="text-gray-600 font-medium">Happy Users</div>
               </div>
               <div className="group cursor-pointer">
-                <div className="text-4xl font-black bg-gradient-to-r from-violet-600 to-indigo-600 bg-clip-text text-transparent mb-2 group-hover:scale-110 transition-transform">100K+</div>
-                <div className="text-gray-600 dark:text-gray-400 font-medium">Rides Completed</div>
+                <div className="text-4xl font-black text-evgreen mb-2 group-hover:scale-110 transition-transform">100K+</div>
+                <div className="text-gray-600 font-medium">Rides Completed</div>
               </div>
             </div>
           </div>
@@ -362,21 +344,21 @@ function BikeModel() {
       </div>
 
       {/* How It Works Section */}
-      <div className="bg-gradient-to-b from-purple-50/30 via-blue-50/30 to-white dark:from-purple-950/30 dark:via-blue-950/30 dark:to-gray-900 py-20 relative overflow-hidden">
+      <div className="bg-gradient-to-b from-gray-50 to-white py-20 relative overflow-hidden">
         {/* Background decoration */}
-        <div className="absolute inset-0 opacity-20">
-          <div className="absolute top-20 left-10 w-96 h-96 bg-purple-400/40 rounded-full blur-3xl animate-pulse"></div>
-          <div className="absolute bottom-20 right-10 w-72 h-72 bg-blue-400/30 rounded-full blur-3xl animate-pulse" style={{ animationDelay: '1.5s' }}></div>
+        <div className="absolute inset-0 opacity-5">
+          <div className="absolute top-20 left-10 w-96 h-96 bg-evgreen rounded-full blur-3xl animate-pulse"></div>
+          <div className="absolute bottom-20 right-10 w-72 h-72 bg-green-300 rounded-full blur-3xl animate-pulse" style={{ animationDelay: '1.5s' }}></div>
         </div>
 
         <div className="container mx-auto px-4 relative z-10">
           <div className="text-center mb-16">
-            <h2 className="text-5xl font-black text-gray-800 dark:text-gray-100 mb-4">
+            <h2 className="text-5xl font-black text-gray-800 mb-4">
               How It
-              <span className="bg-gradient-to-r from-purple-600 via-blue-600 to-indigo-600 bg-clip-text text-transparent ml-3">Works</span>
+              <span className="text-evgreen ml-3">Works</span>
             </h2>
-            <div className="w-24 h-1 bg-gradient-to-r from-purple-600 via-blue-600 to-indigo-600 rounded-full mx-auto mb-6"></div>
-            <p className="text-xl text-gray-600 dark:text-gray-300 max-w-2xl mx-auto">
+            <div className="w-24 h-1 bg-gradient-to-r from-evgreen to-green-400 rounded-full mx-auto mb-6"></div>
+            <p className="text-xl text-gray-600 max-w-2xl mx-auto">
               Get started in minutes and join the green revolution
             </p>
           </div>
@@ -384,65 +366,55 @@ function BikeModel() {
           <div className="grid grid-cols-1 md:grid-cols-4 gap-8">
             <div className="text-center group relative">
               {/* Step connector */}
-              <div className="hidden md:block absolute top-16 left-full w-full h-0.5 bg-gradient-to-r from-indigo-400/50 to-transparent z-0"></div>
-
-              <div className="relative z-10 bg-white dark:bg-gray-800 rounded-2xl p-8 shadow-lg hover:shadow-2xl hover:shadow-indigo-500/10 transform hover:-translate-y-2 transition-all duration-500 border border-gray-200 dark:border-gray-700">
-                <div className="w-16 h-16 bg-gradient-to-br from-indigo-500 to-purple-600 rounded-full flex items-center justify-center text-white font-black text-xl mx-auto mb-6 group-hover:scale-110 transition-transform shadow-lg">1</div>
-                <div className="mb-4 inline-flex items-center justify-center w-16 h-16 rounded-xl bg-indigo-100 dark:bg-indigo-900/30 group-hover:animate-bounce mx-auto">
-                  <Smartphone className="w-8 h-8 text-indigo-600 dark:text-indigo-400" />
-                </div>
-                <h3 className="text-xl font-bold mb-4 text-gray-800 dark:text-gray-100 group-hover:text-indigo-600 dark:group-hover:text-indigo-400 transition-colors">Download & Sign Up</h3>
-                <p className="text-gray-600 dark:text-gray-300 leading-relaxed">Create your account in minutes with just your email and get verified instantly</p>
-                <div className="mt-4 inline-flex items-center text-indigo-600 dark:text-indigo-400 font-semibold text-sm gap-1 group-hover:gap-2 transition-all">
-                  Quick Setup
-                  <ArrowRight className="w-4 h-4" />
-            </div>
-
-            <div className="text-center group relative">
               <div className="hidden md:block absolute top-16 left-full w-full h-0.5 bg-gradient-to-r from-evgreen/50 to-transparent z-0"></div>
-purple-400/50 to-transparent z-0"></div>
 
-              <div className="relative z-10 bg-white dark:bg-gray-800 rounded-2xl p-8 shadow-lg hover:shadow-2xl hover:shadow-purple-500/10 transform hover:-translate-y-2 transition-all duration-500 border border-gray-200 dark:border-gray-700" style={{ animationDelay: '0.2s' }}>
-                <div className="w-16 h-16 bg-gradient-to-br from-purple-500 to-pink-600 rounded-full flex items-center justify-center text-white font-black text-xl mx-auto mb-6 group-hover:scale-110 transition-transform shadow-lg">2</div>
-                <div className="mb-4 inline-flex items-center justify-center w-16 h-16 rounded-xl bg-purple-100 dark:bg-purple-900/30 group-hover:animate-bounce mx-auto">
-                  <Map className="w-8 h-8 text-purple-600 dark:text-purple-400" />
+              <div className="relative z-10 bg-white rounded-2xl p-8 shadow-lg hover:shadow-2xl hover:shadow-evgreen/10 transform hover:-translate-y-2 transition-all duration-500 border border-gray-100">
+                <div className="w-16 h-16 bg-gradient-to-br from-evgreen to-green-400 rounded-full flex items-center justify-center text-white font-black text-xl mx-auto mb-6 group-hover:scale-110 transition-transform">1</div>
+                <div className="mb-4 inline-flex items-center justify-center w-16 h-16 rounded-xl bg-evgreen/10 group-hover:animate-bounce"><Smartphone className="w-8 h-8 text-evgreen" /></div>
+                <h3 className="text-xl font-bold mb-4 text-gray-800 group-hover:text-evgreen transition-colors">Download & Sign Up</h3>
+                <p className="text-gray-600 leading-relaxed">Create your account in minutes with just your email and get verified instantly</p>
+                <div className="mt-4 inline-flex items-center text-evgreen font-semibold text-sm group-hover:translate-x-1 transition-transform gap-1">
+                  Quick Setup <ArrowRight className="w-4 h-4" />
                 </div>
-                <h3 className="text-xl font-bold mb-4 text-gray-800 dark:text-gray-100 group-hover:text-purple-600 dark:group-hover:text-purple-400 transition-colors">Find a Station</h3>
-                <p className="text-gray-600 dark:text-gray-300 leading-relaxed">Locate the nearest station with available bikes using our GPS-enabled map</p>
-                <div className="mt-4 inline-flex items-center text-purple-600 dark:text-purple-400 font-semibold text-sm gap-1 group-hover:gap-2 transition-all">
-                  View Map
-                  <ArrowRight className="w-4 h-4" />
               </div>
             </div>
 
             <div className="text-center group relative">
-              <div className="hidden md:block absolute top-16 left-full w-full h-0.5 bg-gradient-to-r from-blue-400/50 to-transparent z-0"></div>
+              <div className="hidden md:block absolute top-16 left-full w-full h-0.5 bg-gradient-to-r from-evgreen/50 to-transparent z-0"></div>
 
-              <div className="relative z-10 bg-white dark:bg-gray-800 rounded-2xl p-8 shadow-lg hover:shadow-2xl hover:shadow-blue-500/10 transform hover:-translate-y-2 transition-all duration-500 border border-gray-200 dark:border-gray-700" style={{ animationDelay: '0.4s' }}>
-                <div className="w-16 h-16 bg-gradient-to-br from-blue-500 to-cyan-600 rounded-full flex items-center justify-center text-white font-black text-xl mx-auto mb-6 group-hover:scale-110 transition-transform shadow-lg">3</div>
-                <div className="mb-4 inline-flex items-center justify-center w-16 h-16 rounded-xl bg-blue-100 dark:bg-blue-900/30 group-hover:animate-bounce mx-auto">
-                  <QrCode className="w-8 h-8 text-blue-600 dark:text-blue-400" />
+              <div className="relative z-10 bg-white rounded-2xl p-8 shadow-lg hover:shadow-2xl hover:shadow-evgreen/10 transform hover:-translate-y-2 transition-all duration-500 border border-gray-100" style={{ animationDelay: '0.2s' }}>
+                <div className="w-16 h-16 bg-gradient-to-br from-evgreen to-green-400 rounded-full flex items-center justify-center text-white font-black text-xl mx-auto mb-6 group-hover:scale-110 transition-transform">2</div>
+                <div className="mb-4 inline-flex items-center justify-center w-16 h-16 rounded-xl bg-evgreen/10 group-hover:animate-bounce"><Map className="w-8 h-8 text-evgreen" /></div>
+                <h3 className="text-xl font-bold mb-4 text-gray-800 group-hover:text-evgreen transition-colors">Find a Station</h3>
+                <p className="text-gray-600 leading-relaxed">Locate the nearest station with available bikes using our GPS-enabled map</p>
+                <div className="mt-4 inline-flex items-center text-evgreen font-semibold text-sm group-hover:translate-x-1 transition-transform gap-1">
+                  View Map <ArrowRight className="w-4 h-4" />
                 </div>
-                <h3 className="text-xl font-bold mb-4 text-gray-800 dark:text-gray-100 group-hover:text-blue-600 dark:group-hover:text-blue-400 transition-colors">Scan QR Code</h3>
-                <p className="text-gray-600 dark:text-gray-300 leading-relaxed">Unlock your bike instantly by scanning the QR code on the bike</p>
-                <div className="mt-4 inline-flex items-center text-blue-600 dark:text-blue-400 font-semibold text-sm gap-1 group-hover:gap-2 transition-all">
-                  Instant Access
-                  <ArrowRight className="w-4 h-4" />
+              </div>
+            </div>
+
+            <div className="text-center group relative">
+              <div className="hidden md:block absolute top-16 left-full w-full h-0.5 bg-gradient-to-r from-evgreen/50 to-transparent z-0"></div>
+
+              <div className="relative z-10 bg-white rounded-2xl p-8 shadow-lg hover:shadow-2xl hover:shadow-evgreen/10 transform hover:-translate-y-2 transition-all duration-500 border border-gray-100" style={{ animationDelay: '0.4s' }}>
+                <div className="w-16 h-16 bg-gradient-to-br from-evgreen to-green-400 rounded-full flex items-center justify-center text-white font-black text-xl mx-auto mb-6 group-hover:scale-110 transition-transform">3</div>
+                <div className="mb-4 inline-flex items-center justify-center w-16 h-16 rounded-xl bg-evgreen/10 group-hover:animate-bounce"><QrCode className="w-8 h-8 text-evgreen" /></div>
+                <h3 className="text-xl font-bold mb-4 text-gray-800 group-hover:text-evgreen transition-colors">Scan QR Code</h3>
+                <p className="text-gray-600 leading-relaxed">Unlock your bike instantly by scanning the QR code on the bike</p>
+                <div className="mt-4 inline-flex items-center text-evgreen font-semibold text-sm group-hover:translate-x-1 transition-transform gap-1">
+                  Instant Access <ArrowRight className="w-4 h-4" />
                 </div>
               </div>
             </div>
 
             <div className="text-center group">
-              <div className="bg-white dark:bg-gray-800 rounded-2xl p-8 shadow-lg hover:shadow-2xl hover:shadow-green-500/10 transform hover:-translate-y-2 transition-all duration-500 border border-gray-200 dark:border-gray-700" style={{ animationDelay: '0.6s' }}>
-                <div className="w-16 h-16 bg-gradient-to-br from-green-500 to-emerald-600 rounded-full flex items-center justify-center text-white font-black text-xl mx-auto mb-6 group-hover:scale-110 transition-transform shadow-lg">4</div>
-                <div className="mb-4 inline-flex items-center justify-center w-16 h-16 rounded-xl bg-green-100 dark:bg-green-900/30 group-hover:animate-bounce mx-auto">
-                  <Bike className="w-8 h-8 text-green-600 dark:text-green-400" />
-                </div>
-                <h3 className="text-xl font-bold mb-4 text-gray-800 dark:text-gray-100 group-hover:text-green-600 dark:group-hover:text-green-400 transition-colors">Ride & Enjoy</h3>
-                <p className="text-gray-600 dark:text-gray-300 leading-relaxed">Hit the road and enjoy your eco-friendly ride through the city</p>
-                <div className="mt-4 inline-flex items-center text-green-600 dark:text-green-400 font-semibold text-sm gap-1 group-hover:gap-2 transition-all">
-                  Start Riding
-                  <ArrowRight className="w-4 h-4" />
+              <div className="bg-white rounded-2xl p-8 shadow-lg hover:shadow-2xl hover:shadow-evgreen/10 transform hover:-translate-y-2 transition-all duration-500 border border-gray-100" style={{ animationDelay: '0.6s' }}>
+                <div className="w-16 h-16 bg-gradient-to-br from-evgreen to-green-400 rounded-full flex items-center justify-center text-white font-black text-xl mx-auto mb-6 group-hover:scale-110 transition-transform">4</div>
+                <div className="mb-4 inline-flex items-center justify-center w-16 h-16 rounded-xl bg-evgreen/10 group-hover:animate-bounce"><Bike className="w-8 h-8 text-evgreen" /></div>
+                <h3 className="text-xl font-bold mb-4 text-gray-800 group-hover:text-evgreen transition-colors">Ride & Enjoy</h3>
+                <p className="text-gray-600 leading-relaxed">Hit the road and enjoy your eco-friendly ride through the city</p>
+                <div className="mt-4 inline-flex items-center text-evgreen font-semibold text-sm group-hover:translate-x-1 transition-transform gap-1">
+                  Start Riding <ArrowRight className="w-4 h-4" />
                 </div>
               </div>
             </div>
@@ -450,18 +422,18 @@ purple-400/50 to-transparent z-0"></div>
 
           {/* CTA Section */}
           <div className="text-center mt-16">
-            <div className="bg-gradient-to-r from-indigo-600 via-purple-600 to-blue-600 rounded-3xl p-8 text-white shadow-2xl">
+            <div className="bg-gradient-to-r from-evgreen to-green-400 rounded-3xl p-8 text-white shadow-2xl">
               <h3 className="text-3xl font-bold mb-4">Ready to Get Started?</h3>
               <p className="text-xl mb-8 opacity-90">Join thousands of riders making cities cleaner, one ride at a time</p>
               <div className="flex flex-col sm:flex-row gap-4 justify-center">
                 <Link to="/signup" className="group">
-                  <button className="bg-white text-indigo-600 px-8 py-4 rounded-xl font-bold hover:bg-gray-100 transform hover:scale-105 transition-all duration-300 shadow-lg flex items-center gap-2 mx-auto">
+                  <button className="bg-white text-evgreen px-8 py-4 rounded-xl font-bold hover:bg-gray-100 transform hover:scale-105 transition-all duration-300 shadow-lg flex items-center gap-2">
                     Sign Up Free
                     <ChevronRight className="w-5 h-5 group-hover:translate-x-1 transition-transform" />
                   </button>
                 </Link>
                 <Link to="/stations" className="group">
-                  <button className="border-2 border-white text-white px-8 py-4 rounded-xl font-bold hover:bg-white hover:text-indigo-600 transform hover:scale-105 transition-all duration-300 flex items-center gap-2 mx-auto">
+                  <button className="border-2 border-white text-white px-8 py-4 rounded-xl font-bold hover:bg-white hover:text-evgreen transform hover:scale-105 transition-all duration-300 flex items-center gap-2">
                     Find Stations
                     <MapPin className="w-5 h-5 group-hover:scale-110 transition-transform" />
                   </button>
@@ -473,14 +445,11 @@ purple-400/50 to-transparent z-0"></div>
       </div>
 
       {/* Footer */}
-      <footer className="bg-gradient-to-r from-gray-900 via-indigo-950 to-purple-950 text-white py-12">
+      <footer className="bg-gradient-to-r from-gray-800 to-gray-900 text-white py-12">
         <div className="container mx-auto px-4">
           <div className="grid grid-cols-1 md:grid-cols-4 gap-8">
             <div>
-              <h3 className="text-2xl font-bold bg-gradient-to-r from-indigo-400 to-purple-400 bg-clip-text text-transparent mb-4 flex items-center gap-2">
-                BoltRide
-                <Zap className="w-6 h-6 text-indigo-400 animate-pulse" />
-              </h3>
+              <h3 className="text-2xl font-bold text-evgreen mb-4 flex items-center gap-2">BoltRide <Zap className="w-6 h-6 text-evgreen animate-pulse" /></h3>
               <p className="text-gray-400">
                 Making urban transportation sustainable, accessible, and enjoyable for everyone.
               </p>
@@ -488,30 +457,30 @@ purple-400/50 to-transparent z-0"></div>
             <div>
               <h4 className="text-lg font-semibold mb-4">Quick Links</h4>
               <ul className="space-y-2">
-                <li><Link to="/stations" className="text-gray-400 hover:text-indigo-400 transition-colors">Find Stations</Link></li>
-                <li><Link to="/rides" className="text-gray-400 hover:text-purple-400 transition-colors">My Rides</Link></li>
-                <li><Link to="/buy-passes" className="text-gray-400 hover:text-blue-400 transition-colors">Buy Passes</Link></li>
+                <li><Link to="/stations" className="text-gray-400 hover:text-evgreen transition-colors">Find Stations</Link></li>
+                <li><Link to="/rides" className="text-gray-400 hover:text-evgreen transition-colors">My Rides</Link></li>
+                <li><Link to="/buy-passes" className="text-gray-400 hover:text-evgreen transition-colors">Buy Passes</Link></li>
               </ul>
             </div>
             <div>
               <h4 className="text-lg font-semibold mb-4">Support</h4>
               <ul className="space-y-2">
-                <li><a href="#" className="text-gray-400 hover:text-indigo-400 transition-colors">Help Center</a></li>
-                <li><a href="#" className="text-gray-400 hover:text-purple-400 transition-colors">Contact Us</a></li>
-                <li><a href="#" className="text-gray-400 hover:text-blue-400 transition-colors">Safety Guidelines</a></li>
+                <li><a href="#" className="text-gray-400 hover:text-evgreen transition-colors">Help Center</a></li>
+                <li><a href="#" className="text-gray-400 hover:text-evgreen transition-colors">Contact Us</a></li>
+                <li><a href="#" className="text-gray-400 hover:text-evgreen transition-colors">Safety Guidelines</a></li>
               </ul>
             </div>
             <div>
               <h4 className="text-lg font-semibold mb-4">Legal</h4>
               <ul className="space-y-2">
-                <li><a href="#" className="text-gray-400 hover:text-indigo-400 transition-colors">Privacy Policy</a></li>
-                <li><a href="#" className="text-gray-400 hover:text-purple-400 transition-colors">Terms of Service</a></li>
-                <li><a href="#" className="text-gray-400 hover:text-blue-400 transition-colors">Cookie Policy</a></li>
+                <li><a href="#" className="text-gray-400 hover:text-evgreen transition-colors">Privacy Policy</a></li>
+                <li><a href="#" className="text-gray-400 hover:text-evgreen transition-colors">Terms of Service</a></li>
+                <li><a href="#" className="text-gray-400 hover:text-evgreen transition-colors">Cookie Policy</a></li>
               </ul>
             </div>
           </div>
-          <div className="border-t border-gray-700/50 mt-8 pt-8 text-center">
-            <p className="text-gray-400 flex items-center justify-center gap-2">&copy; 2025 BoltRide. All rights reserved. Made with <Heart className="w-4 h-4 text-red-500 fill-red-500 animate-pulse" /> for a sustainable future.</p>
+          <div className="border-t border-gray-700 mt-8 pt-8 text-center">
+            <p className="text-gray-400 flex items-center justify-center gap-1">&copy; 2025 BoltRide. All rights reserved. Made with <Heart className="w-4 h-4 text-red-500 fill-red-500 animate-pulse" /> for a sustainable future.</p>
           </div>
         </div>
       </footer>
