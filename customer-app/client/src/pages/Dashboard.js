@@ -490,26 +490,29 @@ export default function Dashboard() {
           {/* Station Details & Actions */}
           <div className="space-y-8">
             {/* Quick Actions - unique icons, no emojis */}
-            <div className={`${cardClasses} rounded-2xl p-8 shadow-xl`}>
-              <h3 className="text-xl font-bold mb-6 tracking-tight">Quick Actions</h3>
+            <div className={`${cardClasses} rounded-2xl p-8 shadow-xl hover:shadow-2xl transition-shadow duration-300`}>
+              <h3 className="text-xl font-bold mb-6 tracking-tight flex items-center gap-2">
+                <span className="w-1 h-6 bg-gradient-to-b from-[#22c55e] to-[#10b981] rounded-full"></span>
+                Quick Actions
+              </h3>
               <div className="space-y-4">
                 <Link 
                   to="/wallet"
-                  className="block w-full bg-gradient-to-r from-[#22c55e] to-[#10b981] text-white px-4 py-3 rounded-xl font-semibold text-center transition-all duration-300 hover:scale-105 shadow-md"
+                  className="block w-full bg-gradient-to-r from-[#22c55e] to-[#10b981] text-white px-4 py-3 rounded-xl font-semibold text-center transition-all duration-300 hover:scale-105 hover:shadow-lg shadow-md active:scale-95"
                 >
                   <span className="inline-block align-middle mr-2"><svg width="20" height="20" fill="none" viewBox="0 0 20 20"><rect x="2" y="5" width="16" height="10" rx="3" fill="#22c55e"/><rect x="6" y="9" width="8" height="2" rx="1" fill="#fff"/></svg></span>
                   Add Money
                 </Link>
                 <Link 
                   to="/rides"
-                  className="block w-full bg-gradient-to-r from-[#3b82f6] to-[#22c55e] text-white px-4 py-3 rounded-xl font-semibold text-center transition-all duration-300 hover:scale-105 shadow-md"
+                  className="block w-full bg-gradient-to-r from-[#3b82f6] to-[#22c55e] text-white px-4 py-3 rounded-xl font-semibold text-center transition-all duration-300 hover:scale-105 hover:shadow-lg shadow-md active:scale-95"
                 >
                   <span className="inline-block align-middle mr-2"><svg width="20" height="20" fill="none" viewBox="0 0 20 20"><circle cx="10" cy="10" r="9" fill="#3b82f6"/><path d="M6 10h8" stroke="#fff" strokeWidth="2" strokeLinecap="round"/></svg></span>
                   Ride History
                 </Link>
                 <Link 
                   to="/buy-passes"
-                  className="block w-full bg-gradient-to-r from-[#a78bfa] to-[#22c55e] text-white px-4 py-3 rounded-xl font-semibold text-center transition-all duration-300 hover:scale-105 shadow-md"
+                  className="block w-full bg-gradient-to-r from-[#a78bfa] to-[#22c55e] text-white px-4 py-3 rounded-xl font-semibold text-center transition-all duration-300 hover:scale-105 hover:shadow-lg shadow-md active:scale-95"
                 >
                   <span className="inline-block align-middle mr-2"><svg width="20" height="20" fill="none" viewBox="0 0 20 20"><rect x="4" y="6" width="12" height="8" rx="2" fill="#a78bfa"/><rect x="8" y="10" width="4" height="2" rx="1" fill="#fff"/></svg></span>
                   Buy Passes
@@ -519,8 +522,11 @@ export default function Dashboard() {
 
             {/* Selected Station Details - unique icons, no emojis */}
             {selectedStation ? (
-              <div className={`${cardClasses} rounded-2xl p-8 border-2 border-[#22c55e] shadow-xl`}>
-                <h3 className="text-xl font-bold text-[#22c55e] mb-6 tracking-tight">Selected Station</h3>
+              <div className={`${cardClasses} rounded-2xl p-8 border-2 border-[#22c55e] shadow-xl hover:shadow-2xl transition-shadow duration-300`}>
+                <h3 className="text-xl font-bold text-[#22c55e] mb-6 tracking-tight flex items-center gap-2">
+                  <span className="w-1 h-6 bg-gradient-to-b from-[#22c55e] to-[#10b981] rounded-full"></span>
+                  Selected Station
+                </h3>
                 <div className="space-y-4">
                   <div>
                     <h4 className="font-bold text-lg">{selectedStation.station_name}</h4>
@@ -562,8 +568,8 @@ export default function Dashboard() {
                         selectedStation.coordinates?.latitude || selectedStation.location?.coordinates?.[1] || 0,
                         selectedStation.coordinates?.longitude || selectedStation.location?.coordinates?.[0] || 0
                       )
-                        ? 'bg-gradient-to-r from-[#22c55e] to-[#10b981] text-white hover:scale-105 shadow-lg'
-                        : 'bg-gray-500/50 text-gray-400 cursor-not-allowed'
+                        ? 'bg-gradient-to-r from-[#22c55e] to-[#10b981] text-white hover:scale-105 hover:shadow-xl shadow-lg active:scale-95'
+                        : 'bg-gray-500/50 text-gray-400 cursor-not-allowed opacity-60'
                     }`}
                   >
                     {walletBalance < 10 
@@ -592,7 +598,8 @@ export default function Dashboard() {
 
         {/* Nearby Stations List - unique icons, no emojis */}
         <div className="mt-12">
-          <h2 className="text-2xl font-bold mb-8 tracking-tight">
+          <h2 className="text-2xl font-bold mb-8 tracking-tight flex items-center gap-3">
+            <span className="w-1.5 h-8 bg-gradient-to-b from-[#22c55e] to-[#10b981] rounded-full"></span>
             Nearby Stations ({nearbyStations.length}) - Sorted by Distance
           </h2>
           <div className="grid grid-cols-1 md:grid-cols-2 lg:grid-cols-3 gap-6">
@@ -604,9 +611,9 @@ export default function Dashboard() {
               return (
                 <div
                   key={station.station_id}
-                  className={`${cardClasses} rounded-xl p-6 cursor-pointer transition-all duration-300 hover:scale-105 shadow-md ${
+                  className={`${cardClasses} rounded-xl p-6 cursor-pointer transition-all duration-300 hover:scale-105 hover:shadow-lg shadow-md ${
                     selectedStation?.station_id === station.station_id 
-                      ? 'ring-2 ring-[#22c55e] border-[#22c55e]' 
+                      ? 'ring-2 ring-[#22c55e] border-[#22c55e] shadow-lg' 
                       : ''
                   }`}
                   onClick={() => handleStationSelect(station)}
