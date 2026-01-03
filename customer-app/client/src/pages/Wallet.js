@@ -100,7 +100,8 @@ export default function Wallet() {
         {/* Header */}
         <div className="flex justify-between items-center mb-8">
           <div>
-            <h1 className="text-4xl font-black mb-2">
+            <h1 className="text-4xl font-black mb-2 flex items-center gap-3">
+              <span className="w-1.5 h-10 bg-gradient-to-b from-evgreen to-green-400 rounded-full"></span>
               <span className="text-evgreen">Wallet</span>
             </h1>
             <p className={`text-lg ${darkMode ? "text-gray-300" : "text-gray-600"}`}>
@@ -109,7 +110,7 @@ export default function Wallet() {
           </div>
           <Link
             to="/dashboard"
-            className="bg-gray-500/20 hover:bg-gray-500/30 text-gray-400 hover:text-white px-4 py-2 rounded-xl transition-all duration-300"
+            className="bg-gray-500/20 hover:bg-gray-500/30 text-gray-400 hover:text-white px-4 py-2 rounded-xl transition-all duration-300 hover:scale-105 active:scale-95"
           >
             Dashboard
           </Link>
@@ -128,12 +129,12 @@ export default function Wallet() {
         )}
 
         {/* Current Balance Card */}
-        <div className={`${cardClasses} rounded-2xl p-8 mb-8 text-center`}>
+        <div className={`${cardClasses} rounded-2xl p-8 mb-8 text-center shadow-xl hover:shadow-2xl transition-shadow duration-300`}>
           <div className="mb-6">
             {/* Premium Wallet SVG Icon */}
             <div className="mb-4 flex justify-center">
-              <svg className="w-16 h-16" viewBox="0 0 64 64" fill="none">
-                <circle cx="32" cy="32" r="28" fill="#2563eb" />
+              <svg className="w-16 h-16 animate-pulse" viewBox="0 0 64 64" fill="none">
+                <circle cx="32" cy="32" r="28" fill="#22c55e" />
                 <text x="32" y="40" text-anchor="middle" font-size="32" fill="#fff" font-family="Arial, Helvetica, sans-serif">₹</text>
               </svg>
             </div>
@@ -160,8 +161,11 @@ export default function Wallet() {
         </div>
 
         {/* Add Money Section */}
-        <div className={`${cardClasses} rounded-2xl p-8`}>
-          <h3 className="text-2xl font-bold mb-6">Add Money</h3>
+        <div className={`${cardClasses} rounded-2xl p-8 shadow-xl hover:shadow-2xl transition-shadow duration-300`}>
+          <h3 className="text-2xl font-bold mb-6 flex items-center gap-3">
+            <span className="w-1 h-7 bg-gradient-to-b from-evgreen to-green-400 rounded-full"></span>
+            Add Money
+          </h3>
           
           {/* Quick Amount Buttons */}
           <div className="mb-6">
@@ -173,10 +177,10 @@ export default function Wallet() {
                 <button
                   key={quickAmount}
                   onClick={() => setAmount(quickAmount.toString())}
-                  className={`p-4 rounded-xl font-semibold transition-all duration-300 hover:scale-105 ${
+                  className={`p-4 rounded-xl font-semibold transition-all duration-300 hover:scale-105 active:scale-95 shadow-md ${
                     amount === quickAmount.toString()
-                      ? 'bg-evgreen text-black'
-                      : 'bg-evgreen/20 text-evgreen hover:bg-evgreen/30'
+                      ? 'bg-evgreen text-black shadow-lg ring-2 ring-evgreen/50'
+                      : 'bg-evgreen/20 text-evgreen hover:bg-evgreen/30 hover:shadow-lg'
                   }`}
                 >
                   ₹{quickAmount}
@@ -222,8 +226,8 @@ export default function Wallet() {
             disabled={!amount || parseFloat(amount) < 10 || parseFloat(amount) > 10000 || processing}
             className={`w-full py-4 rounded-xl font-bold text-lg transition-all duration-300 ${
               !amount || parseFloat(amount) < 10 || parseFloat(amount) > 10000 || processing
-                ? 'bg-gray-500/50 text-gray-400 cursor-not-allowed'
-                : 'bg-gradient-to-r from-evgreen to-green-400 text-black hover:scale-105 shadow-lg hover:shadow-evgreen/25'
+                ? 'bg-gray-500/50 text-gray-400 cursor-not-allowed opacity-60'
+                : 'bg-gradient-to-r from-evgreen to-green-400 text-black hover:scale-105 hover:shadow-lg shadow-md active:scale-95'
             }`}
           >
             {processing ? (
