@@ -2,6 +2,7 @@ import React, { useState, useEffect, useCallback, useMemo } from 'react';
 import { useNavigate } from 'react-router-dom';
 import { stationsAPI } from '../api';
 import QRScanner from '../components/QRScanner';
+import { RefreshCw, MapPin, Info, Clock, CircleDot, Navigation } from 'lucide-react';
 
 const Stations = () => {
   const navigate = useNavigate();
@@ -587,7 +588,7 @@ const Stations = () => {
         {!userLocation && !locationLoading && (
           <div className={`bg-gradient-to-r from-blue-500/10 to-evgreen/10 border border-blue-500/20 rounded-xl p-4 mb-6`}>
             <div className="flex items-center">
-              <span className="text-blue-400 text-2xl mr-3">ℹ️</span>
+              <Info className="w-6 h-6 text-blue-400 mr-3" />
               <div>
                 <h3 className={`font-semibold ${themeClasses.text} mb-1`}>Find Stations Near You</h3>
                 <p className={themeClasses.textSecondary}>
@@ -619,7 +620,7 @@ const Stations = () => {
             disabled={loading}
             className={`${themeClasses.button} p-3 rounded-full border ${isDarkMode ? 'border-gray-600' : 'border-gray-200'} hover:scale-110 transition-all duration-300`}
           >
-            <span className={loading ? 'animate-spin' : ''}>🔄</span>
+            <RefreshCw className={`w-5 h-5 ${loading ? 'animate-spin' : ''}`} />
           </button>
         </div>
 
@@ -694,9 +695,8 @@ const Stations = () => {
                   <div className="mb-4">
                     <div className={`flex items-center justify-between ${themeClasses.textSecondary} text-sm`}>
                       <div className="flex items-center">
-                        <span className="mr-2 animate-pulse">�</span>
                         <span className="mr-2 animate-pulse">
-                          <svg className="inline w-4 h-4" fill="none" viewBox="0 0 24 24" stroke="currentColor"><circle cx="12" cy="12" r="10" stroke="#22c55e" strokeWidth="2" fill="#fff"/></svg>
+                          <Navigation className="inline w-4 h-4 text-evgreen" />
                         </span>
                         <span className="font-medium transition-all duration-300">
                           {station.distance < 0.1
@@ -711,10 +711,7 @@ const Stations = () => {
                         <span className="ml-2 w-2 h-2 bg-evgreen rounded-full animate-ping opacity-75"></span>
                       </div>
                       <div className="flex items-center text-xs">
-                        <span className="mr-1">⏱️</span>
-                        <span className="mr-1">
-                          <svg className="inline w-4 h-4" fill="none" viewBox="0 0 24 24" stroke="currentColor"><rect x="8" y="12" width="8" height="4" rx="2" fill="#3b82f6"/><rect x="12" y="14" width="4" height="2" rx="1" fill="#fff"/></svg>
-                        </span>
+                        <Clock className="w-4 h-4 mr-1" />
                         <span className="transition-all duration-300">
                           ~{Math.round(station.distance * 12)} min walk
                         </span>
@@ -743,7 +740,7 @@ const Stations = () => {
                     {/* Additional Distance Info */}
                     <div className="mt-1 flex justify-between text-xs opacity-75">
                       <span>
-                        {station.distance < 0.5 ? "🟢 Very Close" :
+                        {station.distance < 0.5 ? <><CircleDot className="inline w-4 h-4 text-green-500 mr-1" />Very Close</> :
                           station.distance < 1 ? "Close" :
                             station.distance < 2 ? "Moderate" : "Far"}
                       </span>
@@ -829,17 +826,17 @@ const Stations = () => {
                   ? fetchNearbyStations(userLocation.lat, userLocation.lng)
                   : fetchDefaultStations()
                 }
-                className="bg-gradient-to-r from-evgreen to-green-400 text-black px-6 py-3 rounded-lg font-semibold hover:scale-105 transition-all duration-300 shadow-lg"
+                className="bg-gradient-to-r from-evgreen to-green-400 text-black px-6 py-3 rounded-lg font-semibold hover:scale-105 transition-all duration-300 shadow-lg flex items-center gap-2"
               >
-                🔄 Refresh Stations
+                <RefreshCw className="w-5 h-5" /> Refresh Stations
               </button>
               {!userLocation && (
                 <button
                   onClick={getUserLocationAndFetchStations}
                   disabled={locationLoading}
-                  className="bg-gradient-to-r from-blue-500 to-blue-600 text-white px-6 py-3 rounded-lg font-semibold hover:scale-105 transition-all duration-300 shadow-lg disabled:opacity-50"
+                  className="bg-gradient-to-r from-blue-500 to-blue-600 text-white px-6 py-3 rounded-lg font-semibold hover:scale-105 transition-all duration-300 shadow-lg disabled:opacity-50 flex items-center gap-2"
                 >
-                  📍 Find Near Me
+                  <MapPin className="w-5 h-5" /> Find Near Me
                 </button>
               )}
             </div>
