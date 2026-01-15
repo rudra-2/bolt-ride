@@ -1,5 +1,5 @@
 import { Canvas, useFrame } from "@react-three/fiber";
-import { OrbitControls, useGLTF, useAnimations, ScrollControls, useScroll, Float, Sparkles, Trail, Ring, Sphere } from "@react-three/drei";
+import { OrbitControls, useGLTF, useAnimations, Float, Sparkles, Trail, Ring, Sphere } from "@react-three/drei";
 import { useEffect, useRef, useState } from "react";
 import { Link } from "react-router-dom";
 import { Vector3, Color } from "three";
@@ -40,10 +40,9 @@ function ParticleSystem({ count = 100 }) {
   );
 }
 
-function BikeModel() {
+function BikeModel({ scrollProgress }) {
   const { scene, animations } = useGLTF("/models/carbon_frame_bike.glb");
   const { actions, mixer } = useAnimations(animations, scene);
-  const scroll = useScroll();
   const actionRef = useRef(null);
   const bikeRef = useRef();
   const trailRef = useRef();
@@ -60,17 +59,17 @@ function BikeModel() {
     // Animation based on scroll
     if (actionRef.current && mixer) {
       const duration = actionRef.current.getClip().duration;
-      mixer.setTime(scroll.offset * duration);
+      mixer.setTime(scrollProgress * duration);
     }
 
     // Enhanced floating motion and rotation with unique effects
     if (bikeRef.current) {
       const time = state.clock.getElapsedTime();
 
-      // Complex rotation patterns
-      bikeRef.current.rotation.y = Math.sin(time * 0.5) * 0.4 + Math.cos(time * 0.3) * 0.1;
+      // Complex rotation patterns - rotate more based on scroll
+      bikeRef.current.rotation.y = Math.sin(time * 0.5) * 0.4 + Math.cos(time * 0.3) * 0.1 + scrollProgress * Math.PI * 2;
       bikeRef.current.rotation.x = Math.sin(time * 0.7) * 0.1;
-      bikeRef.current.rotation.z = Math.cos(time * 0.4) * 0.05 + scroll.offset * 0.2;
+      bikeRef.current.rotation.z = Math.cos(time * 0.4) * 0.05 + scrollProgress * 0.2;
 
       // Dynamic floating with figure-8 pattern
       bikeRef.current.position.y = -1.2 + Math.sin(time * 0.8) * 0.3 + Math.sin(time * 1.2) * 0.1;
@@ -127,10 +126,28 @@ function BikeModel() {
   );
 } export default function LandingPage() {
   const [isDark, setIsDark] = useState(false);
+  const [scrollProgress, setScrollProgress] = useState(0);
+  const heroRef = useRef(null);
 
   useEffect(() => {
     const savedTheme = localStorage.getItem("theme");
     setIsDark(savedTheme === "dark");
+  }, []);
+
+  // Global scroll listener for bike animation
+  useEffect(() => {
+    const handleScroll = () => {
+      if (heroRef.current) {
+        const heroRect = heroRef.current.getBoundingClientRect();
+        const heroHeight = heroRef.current.offsetHeight;
+        const scrolled = -heroRect.top;
+        const progress = Math.max(0, Math.min(1, scrolled / heroHeight));
+        setScrollProgress(progress);
+      }
+    };
+
+    window.addEventListener('scroll', handleScroll, { passive: true });
+    return () => window.removeEventListener('scroll', handleScroll);
   }, []);
 
   return (
@@ -138,7 +155,7 @@ function BikeModel() {
       <Navbar />
 
       {/* Hero Section */}
-      <div className="min-h-screen flex flex-col items-center justify-center bg-gradient-to-br from-gray-50 via-white to-evgreen/10 dark:from-gray-900 dark:via-gray-800 dark:to-evgreen/20 relative overflow-hidden transition-colors duration-500">
+      <div ref={heroRef} className="min-h-screen flex flex-col items-center justify-center bg-gradient-to-br from-gray-50 via-white to-evgreen/10 dark:from-gray-900 dark:via-gray-800 dark:to-evgreen/20 relative overflow-hidden transition-colors duration-500">
         {/* Animated background elements */}
         <div className="absolute inset-0 opacity-20">
           <div className="absolute top-20 left-10 w-72 h-72 bg-evgreen/20 rounded-full blur-3xl animate-pulse"></div>
@@ -233,16 +250,10 @@ function BikeModel() {
               />
               <pointLight position={[-5, -5, -5]} intensity={0.8} color="#00FF94" />
               <pointLight position={[5, -5, 5]} intensity={0.5} color="#ffffff" />
-              <ScrollControls pages={3} damping={0.25}>
-                <BikeModel />
-              </ScrollControls>
+              <BikeModel scrollProgress={scrollProgress} />
             </Canvas>
 
             {/* Floating UI Elements */}
-            <div className="absolute top-4 right-4 bg-white/90 backdrop-blur-sm px-4 py-2 rounded-full border border-evgreen/20 animate-bounce shadow-lg" style={{ animationDelay: '2s' }}>
-              <span className="text-sm font-medium text-gray-700 flex items-center gap-2"><MousePointer2 className="w-4 h-4 text-evgreen" /> Scroll to explore</span>
-            </div>
-
             <div className="absolute bottom-4 left-4 bg-evgreen text-white px-4 py-2 rounded-full animate-pulse shadow-lg">
               <span className="text-sm font-medium flex items-center gap-1"><Zap className="w-4 h-4" /> 100% Electric</span>
             </div>
