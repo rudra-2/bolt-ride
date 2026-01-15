@@ -144,8 +144,6 @@ function BikeModel({ scrollProgress }) {
 
   // Smooth animation loop using requestAnimationFrame
   useEffect(() => {
-    const smoothFactor = 0.08; // Lower = smoother but slower response
-    
     const animate = () => {
       // Lerp (linear interpolation) for smooth transition
       const currentProgress = scrollProgress;
@@ -153,6 +151,8 @@ function BikeModel({ scrollProgress }) {
       const diff = target - currentProgress;
       
       if (Math.abs(diff) > 0.001) {
+        // Slightly faster in middle section
+        const smoothFactor = (currentProgress >= 0.3 && currentProgress <= 0.7) ? 0.14 : 0.12;
         const newProgress = currentProgress + diff * smoothFactor;
         setScrollProgress(newProgress);
       }
