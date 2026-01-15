@@ -62,22 +62,25 @@ function BikeModel({ scrollProgress }) {
       mixer.setTime(scrollProgress * duration);
     }
 
-    // Enhanced floating motion and rotation with unique effects
+    // Enhanced floating motion with unique effects
     if (bikeRef.current) {
       const time = state.clock.getElapsedTime();
 
-      // Complex rotation patterns - rotate more based on scroll
-      bikeRef.current.rotation.y = Math.sin(time * 0.5) * 0.4 + Math.cos(time * 0.3) * 0.1 + scrollProgress * Math.PI * 2;
-      bikeRef.current.rotation.x = Math.sin(time * 0.7) * 0.1;
-      bikeRef.current.rotation.z = Math.cos(time * 0.4) * 0.05 + scrollProgress * 0.2;
+      // Gentle floating rotation (no scroll-based rotation)
+      bikeRef.current.rotation.y = Math.sin(time * 0.3) * 0.15;
+      bikeRef.current.rotation.x = Math.sin(time * 0.5) * 0.05;
+      bikeRef.current.rotation.z = Math.cos(time * 0.4) * 0.03;
 
-      // Dynamic floating with figure-8 pattern
-      bikeRef.current.position.y = -1.2 + Math.sin(time * 0.8) * 0.3 + Math.sin(time * 1.2) * 0.1;
-      bikeRef.current.position.x = Math.sin(time * 0.6) * 0.2;
+      // Dynamic floating with gentle movement
+      bikeRef.current.position.y = -1.2 + Math.sin(time * 0.8) * 0.2;
+      bikeRef.current.position.x = Math.sin(time * 0.6) * 0.1;
       bikeRef.current.position.z = Math.cos(time * 0.4) * 0.1;
 
-      // Scale pulsing effect
-      const scale = 2.5 + Math.sin(time * 2) * 0.1;
+      // Scale based on scroll progress - bike gets slightly larger as you scroll
+      const baseScale = 2.5;
+      const scrollScale = scrollProgress * 0.3;
+      const pulseScale = Math.sin(time * 2) * 0.05;
+      const scale = baseScale + scrollScale + pulseScale;
       bikeRef.current.scale.set(scale, scale, scale);
     }
   });
