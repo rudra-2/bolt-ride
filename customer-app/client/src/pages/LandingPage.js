@@ -127,31 +127,82 @@ function BikeModel({ scrollProgress }) {
 } export default function LandingPage() {
   const [isDark, setIsDark] = useState(false);
   const [scrollProgress, setScrollProgress] = useState(0);
+  const [animationComplete, setAnimationComplete] = useState(false);
   const heroRef = useRef(null);
+  const scrollContainerRef = useRef(null);
+  const accumulatedScroll = useRef(0);
 
   useEffect(() => {
     const savedTheme = localStorage.getItem("theme");
     setIsDark(savedTheme === "dark");
   }, []);
 
-  // Global scroll listener for bike animation
+  // Scroll hijacking for bike animation - page only scrolls after animation completes
   useEffect(() => {
-    const handleScroll = () => {
-      if (heroRef.current) {
+    const scrollThreshold = 800; // Amount of scroll needed to complete animation
+    
+    const handleWheel = (e) => {
+      // If animation is not complete, hijack scroll
+      if (!animationComplete && heroRef.current) {
         const heroRect = heroRef.current.getBoundingClientRect();
-        const heroHeight = heroRef.current.offsetHeight;
-        const scrolled = -heroRect.top;
-        const progress = Math.max(0, Math.min(1, scrolled / heroHeight));
-        setScrollProgress(progress);
+        
+        // Only hijack if we're in the hero section
+        if (heroRect.top >= -10) {
+          e.preventDefault();
+          
+          // Accumulate scroll delta
+          accumulatedScroll.current += e.deltaY;
+          accumulatedScroll.current = Math.max(0, Math.min(scrollThreshold, accumulatedScroll.current));
+          
+          // Calculate progress (0 to 1)
+          const progress = accumulatedScroll.current / scrollThreshold;
+          setScrollProgress(progress);
+          
+          // When animation completes, allow normal scrolling
+          if (progress >= 1) {
+            setAnimationComplete(true);
+          }
+        }
+      }
+      
+      // If scrolling back up and we're at the top, reset
+      if (animationComplete && window.scrollY <= 0 && e.deltaY < 0) {
+        setAnimationComplete(false);
+        accumulatedScroll.current = scrollThreshold;
       }
     };
 
+    // Handle scroll for when user scrolls back up
+    const handleScroll = () => {
+      if (animationComplete && window.scrollY <= 0) {
+        // User scrolled back to top, allow re-hijacking
+        // But keep animation complete until they scroll up more
+      }
+      
+      // If user scrolled back up past hero, reset animation
+      if (heroRef.current) {
+        const heroRect = heroRef.current.getBoundingClientRect();
+        if (heroRect.top > 50 && accumulatedScroll.current > 0) {
+          accumulatedScroll.current = Math.max(0, accumulatedScroll.current - 50);
+          setScrollProgress(accumulatedScroll.current / 800);
+          if (accumulatedScroll.current <= 0) {
+            setAnimationComplete(false);
+          }
+        }
+      }
+    };
+
+    window.addEventListener('wheel', handleWheel, { passive: false });
     window.addEventListener('scroll', handleScroll, { passive: true });
-    return () => window.removeEventListener('scroll', handleScroll);
-  }, []);
+    
+    return () => {
+      window.removeEventListener('wheel', handleWheel);
+      window.removeEventListener('scroll', handleScroll);
+    };
+  }, [animationComplete]);
 
   return (
-    <div className={`min-h-screen ${isDark ? 'dark' : ''}`}>
+    <div ref={scrollContainerRef} className={`min-h-screen ${isDark ? 'dark' : ''}`}>
       <Navbar />
 
       {/* Hero Section */}
