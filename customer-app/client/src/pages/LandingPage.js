@@ -131,15 +131,44 @@ function BikeModel({ scrollProgress }) {
   const heroRef = useRef(null);
   const scrollContainerRef = useRef(null);
   const accumulatedScroll = useRef(0);
+  const targetProgress = useRef(0);
+  const animationFrameRef = useRef(null);
 
   useEffect(() => {
     const savedTheme = localStorage.getItem("theme");
     setIsDark(savedTheme === "dark");
   }, []);
 
+  // Smooth animation loop using requestAnimationFrame
+  useEffect(() => {
+    const smoothFactor = 0.08; // Lower = smoother but slower response
+    
+    const animate = () => {
+      // Lerp (linear interpolation) for smooth transition
+      const currentProgress = scrollProgress;
+      const target = targetProgress.current;
+      const diff = target - currentProgress;
+      
+      if (Math.abs(diff) > 0.001) {
+        const newProgress = currentProgress + diff * smoothFactor;
+        setScrollProgress(newProgress);
+      }
+      
+      animationFrameRef.current = requestAnimationFrame(animate);
+    };
+    
+    animationFrameRef.current = requestAnimationFrame(animate);
+    
+    return () => {
+      if (animationFrameRef.current) {
+        cancelAnimationFrame(animationFrameRef.current);
+      }
+    };
+  }, [scrollProgress]);
+
   // Scroll hijacking for bike animation - page only scrolls after animation completes
   useEffect(() => {
-    const scrollThreshold = 800; // Amount of scroll needed to complete animation
+    const scrollThreshold = 1500; // Increased - more scroll needed for smoother animation
     
     const handleWheel = (e) => {
       // If animation is not complete, hijack scroll
@@ -150,16 +179,17 @@ function BikeModel({ scrollProgress }) {
         if (heroRect.top >= -10) {
           e.preventDefault();
           
-          // Accumulate scroll delta
-          accumulatedScroll.current += e.deltaY;
+          // Accumulate scroll delta with dampening for smoother feel
+          const dampening = 0.5; // Reduce scroll sensitivity
+          accumulatedScroll.current += e.deltaY * dampening;
           accumulatedScroll.current = Math.max(0, Math.min(scrollThreshold, accumulatedScroll.current));
           
-          // Calculate progress (0 to 1)
-          const progress = accumulatedScroll.current / scrollThreshold;
-          setScrollProgress(progress);
+          // Set target progress (actual progress will lerp to this)
+          targetProgress.current = accumulatedScroll.current / scrollThreshold;
           
           // When animation completes, allow normal scrolling
-          if (progress >= 1) {
+          if (targetProgress.current >= 0.98) {
+            targetProgress.current = 1;
             setAnimationComplete(true);
           }
         }
@@ -169,22 +199,18 @@ function BikeModel({ scrollProgress }) {
       if (animationComplete && window.scrollY <= 0 && e.deltaY < 0) {
         setAnimationComplete(false);
         accumulatedScroll.current = scrollThreshold;
+        targetProgress.current = 1;
       }
     };
 
     // Handle scroll for when user scrolls back up
     const handleScroll = () => {
-      if (animationComplete && window.scrollY <= 0) {
-        // User scrolled back to top, allow re-hijacking
-        // But keep animation complete until they scroll up more
-      }
-      
       // If user scrolled back up past hero, reset animation
       if (heroRef.current) {
         const heroRect = heroRef.current.getBoundingClientRect();
         if (heroRect.top > 50 && accumulatedScroll.current > 0) {
-          accumulatedScroll.current = Math.max(0, accumulatedScroll.current - 50);
-          setScrollProgress(accumulatedScroll.current / 800);
+          accumulatedScroll.current = Math.max(0, accumulatedScroll.current - 30);
+          targetProgress.current = accumulatedScroll.current / 1500;
           if (accumulatedScroll.current <= 0) {
             setAnimationComplete(false);
           }
