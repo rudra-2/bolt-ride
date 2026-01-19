@@ -1,5 +1,6 @@
 import React, { useState, useEffect } from 'react';
 import { ridesAPI } from '../api';
+import { XCircle, ChevronDown } from 'lucide-react';
 
 const Rides = () => {
   const [rides, setRides] = useState([]);
@@ -124,7 +125,7 @@ const Rides = () => {
         {/* Error Message */}
         {error && (
           <div className="bg-red-500/20 border border-red-500/50 rounded-lg p-4 mb-6">
-            <p className="text-red-300">❌ {error}</p>
+            <p className="text-red-300 flex items-center gap-2"><XCircle className="w-5 h-5" /> {error}</p>
           </div>
         )}
 
@@ -243,7 +244,7 @@ const Rides = () => {
                   {/* Expand Arrow */}
                   <div className={`${themeClasses.text} transition-transform duration-300 ${selectedRide?.ride_id === ride.ride_id ? 'rotate-180' : ''
                     }`}>
-                    ▼
+                    <ChevronDown className="w-5 h-5" />
                   </div>
                 </div>
 
